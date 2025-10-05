@@ -13,21 +13,19 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-background border-b border-border px-4 py-4">
+      <div className="bg-background border-b border-border px-4 py-1">
         <div className="text-center">
-          <div className="flex items-center justify-center mb-2">
-            <div className="w-12 h-12 mr-3">
+          <div className="flex items-center justify-center">
+            <div className="w-30 h-10 flex items-center justify-center">
         <Image
-                src="/logo.jpg" 
+                src="/logo.png" 
                 alt="Вектор РК" 
-                width={48} 
-                height={48} 
+                width={120} 
+                height={40} 
                 className="rounded-lg object-cover"
               />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Вектор РК</h1>
           </div>
-          <p className="text-muted-foreground text-sm">Отдел снабжения</p>
         </div>
       </div>
 
@@ -38,7 +36,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="https://picsum.photos/80/80?random=1" 
+                src="/next.svg" 
                 alt="Новости"
                 width={80}
                 height={80}
@@ -54,7 +52,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="https://picsum.photos/80/80?random=2" 
+                src="/vercel.svg" 
                 alt="Объявления"
                 width={80}
                 height={80}
@@ -70,7 +68,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="https://picsum.photos/80/80?random=3" 
+                src="/file.svg" 
                 alt="Достижения"
                 width={80}
                 height={80}
@@ -86,7 +84,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="https://picsum.photos/80/80?random=4" 
+                src="/globe.svg" 
                 alt="Команда"
                 width={80}
                 height={80}
@@ -102,7 +100,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="https://picsum.photos/80/80?random=5" 
+                src="/window.svg" 
                 alt="Рост"
                 width={80}
                 height={80}
@@ -122,16 +120,23 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3">
           {/* Left column - 2 buttons */}
           <div className="space-y-3">
-            <Button variant="outline" className="w-full h-16 text-base font-medium bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative">
-              Все заявки
-              <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                12
+            <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
+              <div className="flex flex-col items-start justify-start w-full h-full">
+                <div className="text-left">
+                  <div className="text-lg font-bold text-gray-900">Все заявки</div>
+                  <div className="text-sm text-gray-500 mt-1">Посмотреть статистику</div>
+                </div>
               </div>
             </Button>
-            <Button variant="outline" className="w-full h-16 text-base font-medium bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative">
-              Черновики
-              <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                3
+            <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
+              <div className="flex flex-col items-start justify-start w-full h-full">
+                <div className="text-left">
+                  <div className="text-lg font-bold text-gray-900">Редактировать</div>
+                  <div className="text-sm text-gray-500 mt-1">Внести изменения</div>
+                </div>
+                <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  3
+                </div>
               </div>
             </Button>
           </div>
@@ -139,7 +144,7 @@ export default function Home() {
           {/* Right column - Add button */}
           <div>
             <Link href="/request">
-              <Button className="w-full h-full bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6">
+              <Button className="w-full h-full bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl min-h-24">
                 <div className="absolute top-4 left-4 text-left">
                   <div className="text-lg font-bold leading-tight">Добавить</div>
                   <div className="text-lg font-bold leading-tight">заявку</div>
@@ -155,7 +160,8 @@ export default function Home() {
 
       {/* Recent Requests */}
       <div className="px-4 py-2">
-        <h2 className="text-lg font-semibold text-foreground mb-3">Последние заявки</h2>
+        <div className="bg-gray-50 rounded-2xl p-4">
+          <h2 className="text-lg font-semibold text-foreground mb-3">Последние заявки</h2>
         <div className="flex justify-center mb-4">
           <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
             <Button 
@@ -277,6 +283,7 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+        </div>
         </div>
       </div>
 

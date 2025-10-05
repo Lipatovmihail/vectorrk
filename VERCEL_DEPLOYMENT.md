@@ -61,3 +61,4 @@ vercel --prod
 - **shadcn/ui** компоненты
 - **Lucide React** иконки
 - **Responsive** дизайн
+
