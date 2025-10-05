@@ -238,19 +238,76 @@ export default function RequestPage() {
         // Используем Telegram WebApp для отправки файлов
         console.log('📱 Используем Telegram WebApp для отправки файлов...');
         
-        // Отправляем данные в n8n webhook (как в sellerkit)
+      // Сначала загружаем фото в Telegram (если есть)
+      let telegramFiles = [];
+      if (formData.photos.length > 0) {
+        console.log('📸 Загружаем фото в Telegram...');
         try {
-          const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestData),
+          // Конвертируем blob URLs в base64
+          const photosBase64 = await Promise.all(
+            formData.photos.map(async (photoUrl) => {
+              try {
+                const response = await fetch(photoUrl);
+                const blob = await response.blob();
+                return new Promise((resolve) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => resolve(reader.result as string);
+                  reader.readAsDataURL(blob);
+                });
+              } catch (error) {
+                console.error('Ошибка конвертации фото:', error);
+                return null;
+              }
+            })
+          ).then(results => results.filter(photo => photo !== null));
+
+          // Отправляем в Telegram
+          const telegramResponse = await fetch('/api/upload-to-telegram', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              photos: photosBase64,
+              orderNumber: formData.orderNumber,
+              objectName: formData.objectName
+            })
           });
-          
-          console.log('📤 Заявка отправлена в n8n webhook:', requestData);
-          console.log('📦 Ответ от n8n:', await response.json());
-        } catch (error) {
-          console.error('❌ Ошибка отправки в n8n:', error);
+
+          const telegramData = await telegramResponse.json();
+          if (telegramData.success) {
+            telegramFiles = telegramData.files;
+            console.log('✅ Фото загружены в Telegram:', telegramFiles);
+          } else {
+            console.error('❌ Ошибка загрузки в Telegram:', telegramData.error);
+          }
+        } catch (telegramError) {
+          console.error('❌ Ошибка загрузки в Telegram:', telegramError);
         }
+      }
+
+      // Обновляем requestData с ссылками на файлы в Telegram
+      const updatedRequestData = {
+        ...requestData,
+        request: {
+          ...requestData.request,
+          photos: telegramFiles // Заменяем blob URLs на ссылки Telegram
+        }
+      };
+
+      // Отправляем данные в n8n webhook (как в sellerkit)
+      try {
+        const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedRequestData),
+        });
+        
+        console.log('📤 Заявка отправлена в n8n webhook:', updatedRequestData);
+        console.log('📦 Ответ от n8n:', await response.json());
+      } catch (error) {
+        console.error('❌ Ошибка отправки в n8n:', error);
+      }
         
         // Отправляем через Telegram WebApp
         window.Telegram?.WebApp?.sendData(JSON.stringify(requestData));
