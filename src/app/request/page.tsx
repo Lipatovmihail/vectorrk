@@ -33,8 +33,8 @@ export default function RequestPage() {
     { number: 2, title: "Введите наименование объекта", placeholder: "Университетский лицей", field: "objectName" },
     { number: 3, title: "Введите адрес объекта", placeholder: "наб. Варкауса, 15", field: "objectAddress" },
     { number: 4, title: "Введите дату поставки", placeholder: "10.12.2024 16:10", field: "deliveryDate" },
-    { number: 5, title: "Необходимые материалы", placeholder: "Пришлите, списком материалы к заявке.", field: "materials" },
-    { number: 6, title: "Отправьте фото или нажмите пропустить", placeholder: "Добавьте фотографии", field: "photos" }
+    { number: 5, title: "Необходимые материалы", placeholder: "1. Страховочная привязь – 2 шт;\n2. Страховочный ус – 2 шт;\n3. Жилетка – 2 шт;\n4. Перчатки х/б – 20 пар;\n5. Перчатки зимние – 4 пары;\n6. Перчатки прорезиненные – 10 пар;", field: "materials" },
+    { number: 6, title: "Отправьте фото", placeholder: "Добавьте фотографии", field: "photos" }
   ]
 
   const handleInputChange = (field: string, value: string) => {
@@ -145,10 +145,10 @@ export default function RequestPage() {
           </Card>
 
           <div className="flex gap-3 pb-6">
-            <Button variant="outline" className="flex-1" onClick={() => setShowConfirmation(false)}>
+            <Button variant="outline" className="flex-1 h-12" onClick={() => setShowConfirmation(false)}>
               Редактировать
             </Button>
-            <Button className="flex-1">
+            <Button className="flex-1 h-12">
               <Check className="h-4 w-4 mr-2" />
               Отправить заявку
             </Button>
@@ -194,19 +194,24 @@ export default function RequestPage() {
               [{currentStep}/6] {currentStepData.title}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Например, &quot;{currentStepData.placeholder}&quot;
+              {currentStep === 6 
+                ? "Можно пропустить шаг, нажав на кнопку \"Завершить\""
+                : currentStep === 5
+                ? "Укажите необходимые материалы списком"
+                : `Например, "${currentStepData.placeholder}"`
+              }
             </p>
           </CardHeader>
           <CardContent>
             {currentStep === 4 ? (
-              <div className="space-y-4">
-                <div>
+              <div className="space-y-4 min-h-[200px] flex flex-col">
+            <div className="flex-1 flex flex-col justify-center">
                   <Label className="text-sm font-medium mb-2 block">Выберите дату</Label>
                   <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-start text-left font-normal"
+                        className="w-full justify-start text-left font-normal flex-1"
                       >
                         <Calendar className="mr-2 h-4 w-4" />
                         {formData.deliveryDate ? (
@@ -225,35 +230,38 @@ export default function RequestPage() {
                           setCalendarOpen(false)
                         }}
                         initialFocus
+                        locale={ru}
                       />
                     </PopoverContent>
                   </Popover>
-                </div>
-                <div>
+            </div>
+            <div className="flex-1 flex flex-col justify-center">
                   <Label className="text-sm font-medium mb-2 block">Время (необязательно)</Label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
+              <Input 
                       type="time"
                       placeholder="16:10"
                       value={formData.deliveryTime}
                       onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
                       onKeyPress={handleKeyPress}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : currentStep === 5 ? (
-              <Textarea
-                placeholder={currentStepData.placeholder}
-                value={formData.materials}
-                onChange={(e) => handleInputChange('materials', e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="min-h-32"
+                      className="pl-10 h-12"
               />
+            </div>
+            </div>
+            </div>
+            ) : currentStep === 5 ? (
+              <div className="min-h-[200px] flex flex-col">
+              <Textarea 
+                  placeholder={currentStepData.placeholder}
+                  value={formData.materials}
+                  onChange={(e) => handleInputChange('materials', e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1 min-h-32"
+              />
+            </div>
             ) : currentStep === 6 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 min-h-[200px]">
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                   <p className="text-gray-600 mb-4">Добавьте фотографии</p>
@@ -297,13 +305,15 @@ export default function RequestPage() {
                 )}
               </div>
             ) : (
-              <Input
-                placeholder={currentStepData.placeholder}
-                value={formData[currentStepData.field as keyof typeof formData] as string}
-                onChange={(e) => handleInputChange(currentStepData.field, e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="text-lg"
-              />
+              <div className="min-h-[200px] flex flex-col">
+                <Input
+                  placeholder={currentStepData.placeholder}
+                  value={formData[currentStepData.field as keyof typeof formData] as string}
+                  onChange={(e) => handleInputChange(currentStepData.field, e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1"
+                />
+              </div>
             )}
           </CardContent>
         </Card>
@@ -311,11 +321,11 @@ export default function RequestPage() {
         {/* Navigation */}
         <div className="flex gap-3 mt-6 pb-6">
           {currentStep > 1 && (
-            <Button variant="outline" className="flex-1" onClick={prevStep}>
+            <Button variant="outline" className="flex-1 h-12" onClick={prevStep}>
               Назад
           </Button>
           )}
-          <Button className="flex-1" onClick={nextStep}>
+          <Button className="flex-1 h-12" onClick={nextStep}>
             {currentStep === 6 ? "Завершить" : "Далее"}
           </Button>
         </div>

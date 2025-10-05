@@ -249,7 +249,7 @@ export default function Home() {
         <div className="bg-gray-50 rounded-2xl p-4">
           <h2 className="text-lg font-semibold text-foreground mb-3">Последние заявки</h2>
         <div className="mb-4">
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
             <Button 
               variant="ghost" 
               size="sm" 
@@ -260,22 +260,7 @@ export default function Home() {
               }`}
               onClick={() => setActiveFilter("Все")}
             >
-              Все заявки
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
-                activeFilter === "В работе" 
-                  ? "bg-white shadow-sm text-gray-900" 
-                  : "text-gray-600 hover:bg-white"
-              }`}
-              onClick={() => setActiveFilter("В работе")}
-            >
-              В работе
-              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                {requests.filter(r => r.status === "В работе").length}
-              </div>
+              Все
             </Button>
             <Button 
               variant="ghost" 
@@ -290,6 +275,21 @@ export default function Home() {
               Выполнено
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
                 {requests.filter(r => r.status === "Выполнено").length}
+              </div>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
+                activeFilter === "В работе" 
+                  ? "bg-white shadow-sm text-gray-900" 
+                  : "text-gray-600 hover:bg-white"
+              }`}
+              onClick={() => setActiveFilter("В работе")}
+            >
+              В работе
+              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
+                {requests.filter(r => r.status === "В работе").length}
               </div>
             </Button>
             <Button 
