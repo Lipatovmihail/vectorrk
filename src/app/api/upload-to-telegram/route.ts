@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import FormData from 'form-data';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,12 +35,15 @@ export async function POST(request: NextRequest) {
       const base64Image = matches[2];
       const buffer = Buffer.from(base64Image, 'base64');
       
-      // Создаем FormData для отправки в Telegram
+      // Создаем FormData для отправки в Telegram (используем form-data библиотеку)
       const formData = new FormData();
-      const blob = new Blob([buffer], { type: mimeType });
       const fileName = `photo_${i + 1}_${orderNumber || 'request'}_${Date.now()}.${mimeType.split('/')[1] || 'jpg'}`;
       
-      formData.append('photo', blob, fileName);
+      // ✅ Исправление: используем Buffer напрямую с правильными опциями
+      formData.append('photo', buffer, {
+        filename: fileName,
+        contentType: mimeType,
+      });
       formData.append('chat_id', CHAT_ID);
       formData.append('caption', `Фото ${i + 1} для заявки ${orderNumber || 'Без номера'} - ${objectName || 'Без объекта'}`);
 
@@ -47,7 +51,8 @@ export async function POST(request: NextRequest) {
         // Отправляем файл в Telegram
         const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
           method: 'POST',
-          body: formData,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          body: formData as any, // Принудительное приведение типа для Node.js FormData
         });
 
         const result = await response.json();
