@@ -58,7 +58,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="/next.svg" 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center" 
                 alt="Новости"
                 width={80}
                 height={80}
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="/vercel.svg" 
+                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center" 
                 alt="Объявления"
                 width={80}
                 height={80}
@@ -90,7 +90,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="/file.svg" 
+                src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center" 
                 alt="Достижения"
                 width={80}
                 height={80}
@@ -106,7 +106,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="/globe.svg" 
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center" 
                 alt="Команда"
                 width={80}
                 height={80}
@@ -122,7 +122,7 @@ export default function Home() {
           <div className="min-w-[80px] aspect-square bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-lg overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src="/window.svg" 
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center" 
                 alt="Рост"
                 width={80}
                 height={80}
@@ -130,6 +130,70 @@ export default function Home() {
               />
               <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 text-center">
                 Рост
+              </div>
+            </div>
+          </div>
+
+          {/* News Story 6 - Строительство */}
+          <div className="min-w-[80px] aspect-square bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-lg overflow-hidden">
+            <div className="w-full h-full relative">
+              <Image 
+                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center" 
+                alt="Строительство"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 text-center">
+                Строительство
+              </div>
+            </div>
+          </div>
+
+          {/* News Story 7 - Оборудование */}
+          <div className="min-w-[80px] aspect-square bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-lg overflow-hidden">
+            <div className="w-full h-full relative">
+              <Image 
+                src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center" 
+                alt="Оборудование"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 text-center">
+                Оборудование
+              </div>
+            </div>
+          </div>
+
+          {/* News Story 8 - Безопасность */}
+          <div className="min-w-[80px] aspect-square bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg overflow-hidden">
+            <div className="w-full h-full relative">
+              <Image 
+                src="https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center" 
+                alt="Безопасность"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 text-center">
+                Безопасность
+              </div>
+            </div>
+          </div>
+
+          {/* News Story 9 - Логистика */}
+          <div className="min-w-[80px] aspect-square bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-lg overflow-hidden">
+            <div className="w-full h-full relative">
+              <Image 
+                src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center" 
+                alt="Логистика"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 text-center">
+                Логистика
               </div>
             </div>
           </div>
