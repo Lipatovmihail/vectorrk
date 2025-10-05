@@ -5,36 +5,160 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Calendar, MapPin, Building, Package, Plus, Trash2 } from "lucide-react"
+import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ArrowLeft, Calendar, Camera, Check, X, Clock } from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
+import { format } from "date-fns"
+import { ru } from "date-fns/locale"
 
 export default function RequestPage() {
-  const [materials, setMaterials] = useState([
-    { id: 1, name: "", quantity: "", unit: "" }
-  ])
+  const [currentStep, setCurrentStep] = useState(1)
+  const [formData, setFormData] = useState({
+    orderNumber: "",
+    objectName: "",
+    objectAddress: "",
+    deliveryDate: null as Date | null,
+    deliveryTime: "",
+    materials: "",
+    photos: [] as string[]
+  })
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [calendarOpen, setCalendarOpen] = useState(false)
 
-  const addMaterial = () => {
-    setMaterials([...materials, { 
-      id: materials.length + 1, 
-      name: "", 
-      quantity: "", 
-      unit: "" 
-    }])
+  const steps = [
+    { number: 1, title: "Введите номер наряд-заказа", placeholder: "НЗ 545/204", field: "orderNumber" },
+    { number: 2, title: "Введите наименование объекта", placeholder: "Университетский лицей", field: "objectName" },
+    { number: 3, title: "Введите адрес объекта", placeholder: "наб. Варкауса, 15", field: "objectAddress" },
+    { number: 4, title: "Введите дату поставки", placeholder: "10.12.2024 16:10", field: "deliveryDate" },
+    { number: 5, title: "Необходимые материалы", placeholder: "Пришлите, списком материалы к заявке.", field: "materials" },
+    { number: 6, title: "Отправьте фото или нажмите пропустить", placeholder: "Добавьте фотографии", field: "photos" }
+  ]
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const removeMaterial = (id: number) => {
-    if (materials.length > 1) {
-      setMaterials(materials.filter(m => m.id !== id))
+  const nextStep = () => {
+    if (currentStep < 6) {
+      setCurrentStep(currentStep + 1)
+    } else {
+      setShowConfirmation(true)
     }
   }
 
-  const updateMaterial = (id: number, field: string, value: string) => {
-    setMaterials(materials.map(m => 
-      m.id === id ? { ...m, [field]: value } : m
-    ))
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1)
+    }
   }
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (files) {
+      const newPhotos = Array.from(files).map(file => URL.createObjectURL(file))
+      setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newPhotos] }))
+    }
+  }
+
+  const removePhoto = (index: number) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      photos: prev.photos.filter((_, i) => i !== index) 
+    }))
+  }
+
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && currentStep < 6) {
+      nextStep()
+    }
+  }
+
+  if (showConfirmation) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <div className="bg-background border-b border-border px-4 py-4">
+          <div className="flex items-center">
+            <Button variant="ghost" size="sm" className="mr-3" onClick={() => setShowConfirmation(false)}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Подтверждение заявки</h1>
+              <p className="text-sm text-muted-foreground">Проверьте данные перед отправкой</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-4 py-4 space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Данные заявки</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Номер наряд-заказа</Label>
+                <p className="text-base">{formData.orderNumber || "Не указано"}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Наименование объекта</Label>
+                <p className="text-base">{formData.objectName || "Не указано"}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Адрес объекта</Label>
+                <p className="text-base">{formData.objectAddress || "Не указано"}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Дата поставки</Label>
+                <p className="text-base">
+                  {formData.deliveryDate 
+                    ? `${format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })}${formData.deliveryTime ? ` ${formData.deliveryTime}` : ''}`
+                    : "Не указано"
+                  }
+                </p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Материалы</Label>
+                <p className="text-base">{formData.materials || "Не указано"}</p>
+              </div>
+              {formData.photos.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Фотографии</Label>
+                  <div className="flex gap-2 mt-2">
+                    {formData.photos.map((photo, index) => (
+                      <div key={index} className="relative">
+                        <Image
+                          src={photo}
+                          alt={`Фото ${index + 1}`}
+                          width={80}
+                          height={80}
+                          className="rounded-lg object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="flex gap-3 pb-6">
+            <Button variant="outline" className="flex-1" onClick={() => setShowConfirmation(false)}>
+              Редактировать
+            </Button>
+            <Button className="flex-1">
+              <Check className="h-4 w-4 mr-2" />
+              Отправить заявку
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const currentStepData = steps[currentStep - 1]
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,210 +172,151 @@ export default function RequestPage() {
           </Link>
           <div>
             <h1 className="text-xl font-bold text-foreground">Новая заявка</h1>
-            <p className="text-sm text-muted-foreground">Отдел снабжения</p>
+            <p className="text-sm text-muted-foreground">Шаг {currentStep}/6</p>
           </div>
         </div>
       </div>
 
-      <div className="px-4 py-4 space-y-6">
-        {/* Дата поставки */}
+      {/* Progress Bar */}
+      <div className="px-4 py-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${(currentStep / 6) * 100}%` }}
+          ></div>
+        </div>
+      </div>
+
+      <div className="px-4 py-4">
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
-              Дата поставки
+          <CardHeader>
+            <CardTitle className="text-lg">
+              [{currentStep}/6] {currentStepData.title}
             </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Например, &quot;{currentStepData.placeholder}&quot;
+            </p>
           </CardHeader>
           <CardContent>
-            <Input 
-              type="date" 
-              className="w-full"
-            />
-          </CardContent>
-        </Card>
-
-        {/* Адрес поставки */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center">
-              <MapPin className="h-4 w-4 mr-2" />
-              Адрес поставки
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <Label htmlFor="address">Адрес</Label>
-              <Input 
-                id="address"
-                placeholder="Введите адрес поставки"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="contact">Контактное лицо</Label>
-              <Input 
-                id="contact"
-                placeholder="ФИО ответственного"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Телефон</Label>
-              <Input 
-                id="phone"
-                placeholder="+7 (___) ___-__-__"
-                className="mt-1"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Объект */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center">
-              <Building className="h-4 w-4 mr-2" />
-              Объект
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <Label htmlFor="object">Название объекта</Label>
-              <Input 
-                id="object"
-                placeholder="Например: ЖК 'Солнечный'"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="object-type">Тип объекта</Label>
-              <Select>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Выберите тип объекта" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="residential">Жилой комплекс</SelectItem>
-                  <SelectItem value="commercial">Коммерческий объект</SelectItem>
-                  <SelectItem value="industrial">Промышленный объект</SelectItem>
-                  <SelectItem value="social">Социальный объект</SelectItem>
-                  <SelectItem value="other">Другое</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="object-description">Описание</Label>
-              <Textarea 
-                id="object-description"
-                placeholder="Дополнительная информация об объекте"
-                className="mt-1"
-                rows={3}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Материалы */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center">
-                <Package className="h-4 w-4 mr-2" />
-                Материалы
-              </CardTitle>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={addMaterial}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Добавить
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {materials.map((material, index) => (
-              <div key={material.id} className="border border-border rounded-lg p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Материал {index + 1}
-                  </span>
-                  {materials.length > 1 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => removeMaterial(material.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-                
-                <div className="grid grid-cols-1 gap-3">
-                  <div>
-                    <Label>Название материала</Label>
-                    <Input 
-                      placeholder="Например: Цемент М400"
-                      value={material.name}
-                      onChange={(e) => updateMaterial(material.id, 'name', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label>Количество</Label>
-                      <Input 
-                        placeholder="0"
-                        type="number"
-                        value={material.quantity}
-                        onChange={(e) => updateMaterial(material.id, 'quantity', e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label>Единица измерения</Label>
-                      <Select 
-                        value={material.unit}
-                        onValueChange={(value) => updateMaterial(material.id, 'unit', value)}
+            {currentStep === 4 ? (
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Выберите дату</Label>
+                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal"
                       >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Выберите" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="kg">кг</SelectItem>
-                          <SelectItem value="ton">т</SelectItem>
-                          <SelectItem value="m3">м³</SelectItem>
-                          <SelectItem value="m2">м²</SelectItem>
-                          <SelectItem value="pcs">шт</SelectItem>
-                          <SelectItem value="m">м</SelectItem>
-                          <SelectItem value="l">л</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label>Примечание</Label>
-                    <Textarea 
-                      placeholder="Дополнительная информация о материале"
-                      className="mt-1"
-                      rows={2}
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {formData.deliveryDate ? (
+                          format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })
+                        ) : (
+                          <span>Выберите дату</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <CalendarComponent
+                        mode="single"
+                        selected={formData.deliveryDate || undefined}
+                        onSelect={(date) => {
+                          setFormData(prev => ({ ...prev, deliveryDate: date || null }))
+                          setCalendarOpen(false)
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Время (необязательно)</Label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      type="time"
+                      placeholder="16:10"
+                      value={formData.deliveryTime}
+                      onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                      onKeyPress={handleKeyPress}
+                      className="pl-10"
                     />
                   </div>
                 </div>
               </div>
-            ))}
+            ) : currentStep === 5 ? (
+              <Textarea
+                placeholder={currentStepData.placeholder}
+                value={formData.materials}
+                onChange={(e) => handleInputChange('materials', e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="min-h-32"
+              />
+            ) : currentStep === 6 ? (
+              <div className="space-y-4">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-4">Добавьте фотографии</p>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                    id="photo-upload"
+                  />
+                  <Button asChild>
+                    <label htmlFor="photo-upload" className="cursor-pointer">
+                      Выбрать фото
+                    </label>
+                    </Button>
+                </div>
+                
+                {formData.photos.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2">
+                    {formData.photos.map((photo, index) => (
+                      <div key={index} className="relative">
+                        <Image
+                          src={photo}
+                          alt={`Фото ${index + 1}`}
+                          width={100}
+                          height={100}
+                          className="rounded-lg object-cover"
+                        />
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                          onClick={() => removePhoto(index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                    </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Input
+                placeholder={currentStepData.placeholder}
+                value={formData[currentStepData.field as keyof typeof formData] as string}
+                onChange={(e) => handleInputChange(currentStepData.field, e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="text-lg"
+              />
+            )}
           </CardContent>
         </Card>
 
-        {/* Кнопки действий */}
-        <div className="flex gap-3 pb-6">
-          <Button variant="outline" className="flex-1">
-            Сохранить черновик
+        {/* Navigation */}
+        <div className="flex gap-3 mt-6 pb-6">
+          {currentStep > 1 && (
+            <Button variant="outline" className="flex-1" onClick={prevStep}>
+              Назад
           </Button>
-          <Button className="flex-1">
-            Отправить заявку
+          )}
+          <Button className="flex-1" onClick={nextStep}>
+            {currentStep === 6 ? "Завершить" : "Далее"}
           </Button>
         </div>
       </div>
