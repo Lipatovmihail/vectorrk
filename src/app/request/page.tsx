@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ArrowLeft, Calendar, Camera, Check, X, Clock } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { format } from "date-fns"
@@ -26,6 +26,54 @@ export default function RequestPage() {
     photos: [] as string[]
   })
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const [telegramDebug, setTelegramDebug] = useState<string>('')
+
+  // Инициализация Telegram WebApp (как в sellerkit)
+  useEffect(() => {
+    const initTelegramWebApp = async () => {
+      console.log('🔍 Проверяем инициализацию Telegram WebApp...');
+      console.log('window.Telegram:', window.Telegram);
+      console.log('window.Telegram?.WebApp:', window.Telegram?.WebApp);
+      
+      if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+        console.log('📱 initData:', window.Telegram.WebApp.initData);
+        console.log('📱 initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
+        console.log('📱 WebApp version:', window.Telegram.WebApp.version);
+        console.log('📱 WebApp platform:', window.Telegram.WebApp.platform);
+        
+        const telegramUser = window.Telegram.WebApp.initDataUnsafe?.user;
+        const telegramId = telegramUser?.id;
+        
+        console.log('📱 Telegram User:', telegramUser);
+        console.log('📱 Telegram ID:', telegramId);
+        
+        // Устанавливаем отладочную информацию
+        const debugInfo = `Telegram ID: ${telegramId || 'не найден'} | initData: ${window.Telegram.WebApp.initData ? 'есть' : 'нет'}`;
+        setTelegramDebug(debugInfo);
+        console.log('📱 Telegram Debug:', debugInfo);
+        
+        // Инициализация WebApp
+        try {
+          window.Telegram.WebApp.ready();
+          window.Telegram.WebApp.expand();
+          console.log('✅ Telegram WebApp инициализирован');
+        } catch (error) {
+          console.error('❌ Ошибка инициализации WebApp:', error);
+        }
+        
+        // Сохраняем Telegram ID в localStorage
+        if (telegramId) {
+          localStorage.setItem('telegram_id', telegramId.toString());
+          console.log('💾 Telegram ID сохранен в localStorage:', telegramId);
+        }
+      } else {
+        setTelegramDebug('Не в Telegram WebApp');
+        console.log('❌ Telegram WebApp не инициализирован');
+      }
+    };
+    
+    initTelegramWebApp();
+  }, [])
   const [calendarOpen, setCalendarOpen] = useState(false)
 
   const steps = [
@@ -80,6 +128,7 @@ export default function RequestPage() {
       }
     }
     
+    console.log('🔍 getTelegramData:', { telegram_id: telegramId, initData: initData ? 'есть' : 'нет' });
     return { telegram_id: telegramId, initData };
   }
 
@@ -100,8 +149,14 @@ export default function RequestPage() {
         second: '2-digit'
       });
 
-      // Проверяем, есть ли Telegram WebApp
-      const isTelegramWebApp = typeof window !== 'undefined' && window.Telegram?.WebApp;
+      // Проверяем, есть ли Telegram WebApp (как в sellerkit)
+      const isTelegramWebApp = typeof window !== 'undefined' && 
+        window.Telegram && 
+        window.Telegram.WebApp && 
+        typeof window.Telegram.WebApp.sendData === 'function';
+      
+      // Получаем информацию о пользователе Telegram (как в sellerkit)
+      const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       
       // Отправляем данные через Telegram WebApp
       const requestData = {
@@ -118,8 +173,26 @@ export default function RequestPage() {
         page: "request-form",
         mode: "submit",
         telegram_id: telegram_id,
-        initData: initData
+        initData: initData,
+        // ★ Добавляем полную информацию о пользователе Telegram
+        telegram_user: telegramUser ? {
+          id: telegramUser.id,
+          first_name: telegramUser.first_name,
+          last_name: telegramUser.last_name,
+          username: telegramUser.username,
+          language_code: telegramUser.language_code,
+          is_premium: telegramUser.is_premium
+        } : null
       };
+
+      // Отладочная информация
+      console.log('🔍 Проверка Telegram WebApp:');
+      console.log('🔍 window.Telegram:', !!window.Telegram);
+      console.log('🔍 window.Telegram.WebApp:', !!window.Telegram?.WebApp);
+      console.log('🔍 sendData function:', typeof window.Telegram?.WebApp?.sendData);
+      console.log('🔍 isTelegramWebApp:', isTelegramWebApp);
+      console.log('👤 Telegram User:', telegramUser);
+      console.log('📤 Request Data:', requestData);
 
       if (isTelegramWebApp) {
         // Используем Telegram WebApp для отправки файлов
@@ -133,6 +206,7 @@ export default function RequestPage() {
         return;
       } else {
         // Fallback: для обычного браузера показываем сообщение
+        console.log('⚠️ Telegram WebApp не обнаружен, показываем сообщение');
         alert('Это приложение предназначено для использования в Telegram. Пожалуйста, откройте его через Telegram бота.');
         return;
       }
@@ -251,6 +325,13 @@ export default function RequestPage() {
           </div>
         </div>
 
+        {/* Отладочная информация для Telegram */}
+        <div className="bg-yellow-100 border border-yellow-300 rounded p-2 mx-4 mt-2">
+          <div className="text-xs text-yellow-800">
+            🔍 Отладка: {telegramDebug}
+          </div>
+        </div>
+
         <div className="px-4 py-4 space-y-4">
           <Card>
             <CardHeader>
@@ -333,6 +414,13 @@ export default function RequestPage() {
             <h1 className="text-xl font-bold text-foreground">Новая заявка</h1>
             <p className="text-sm text-muted-foreground">Шаг {currentStep}/6</p>
           </div>
+        </div>
+      </div>
+
+      {/* Отладочная информация для Telegram */}
+      <div className="bg-yellow-100 border border-yellow-300 rounded p-2 mx-4 mt-2">
+        <div className="text-xs text-yellow-800">
+          🔍 Отладка: {telegramDebug}
         </div>
       </div>
 

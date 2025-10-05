@@ -163,3 +163,40 @@ The `fromJSON` method is deprecated. Please use the `JWT` constructor instead. F
   path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
 }
  ✓ Compiled in 40ms
+ ✓ Compiled /request in 23ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/request/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/request/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/pages/_app/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/pages/_app/build-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/request/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/request/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/pages/_app/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/pages/_app/build-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/pages/_app/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/pages/_app/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
+}
