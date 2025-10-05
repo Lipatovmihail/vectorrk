@@ -10,10 +10,32 @@ import { useState } from "react"
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState("Все")
+  
+  // Данные заявок
+  const requests = [
+    { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В работе", icon: "Package" },
+    { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Выполнено", icon: "Building" },
+    { id: 3, title: "Кирпич керамический", object: "Школа №15", status: "Отправлена", icon: "Package" },
+    { id: 4, title: "Бетон М300", object: "Торговый центр", status: "В работе", icon: "Building" },
+    { id: 5, title: "Песок речной", object: "ЖК \"Райский\"", status: "Выполнено", icon: "Package" },
+    { id: 6, title: "Щебень гранитный", object: "Спорткомплекс", status: "В работе", icon: "Building" },
+    { id: 7, title: "Гипсокартон", object: "Офисное здание", status: "Отправлена", icon: "Package" },
+    { id: 8, title: "Утеплитель", object: "Жилой дом", status: "Выполнено", icon: "Building" }
+  ]
+  
+  // Фильтрация заявок по статусу
+  const filteredRequests = activeFilter === "Все" 
+    ? requests 
+    : requests.filter(request => {
+        if (activeFilter === "В работе") return request.status === "В работе"
+        if (activeFilter === "Выполнено") return request.status === "Выполнено"
+        if (activeFilter === "Отправлено") return request.status === "Отправлена"
+        return true
+      })
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-background border-b border-border px-4 py-1">
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-1">
         <div className="text-center">
           <div className="flex items-center justify-center">
             <div className="w-30 h-10 flex items-center justify-center">
@@ -162,7 +184,7 @@ export default function Home() {
       <div className="px-4 py-2">
         <div className="bg-gray-50 rounded-2xl p-4">
           <h2 className="text-lg font-semibold text-foreground mb-3">Последние заявки</h2>
-        <div className="flex justify-center mb-4">
+        <div className="mb-4">
           <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
             <Button 
               variant="ghost" 
@@ -174,7 +196,7 @@ export default function Home() {
               }`}
               onClick={() => setActiveFilter("Все")}
             >
-              Все
+              Все заявки
             </Button>
             <Button 
               variant="ghost" 
@@ -188,7 +210,7 @@ export default function Home() {
             >
               В работе
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                5
+                {requests.filter(r => r.status === "В работе").length}
               </div>
             </Button>
             <Button 
@@ -203,7 +225,7 @@ export default function Home() {
             >
               Выполнено
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                2
+                {requests.filter(r => r.status === "Выполнено").length}
               </div>
             </Button>
             <Button 
@@ -218,71 +240,49 @@ export default function Home() {
             >
               Отправлено
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                1
+                {requests.filter(r => r.status === "Отправлена").length}
               </div>
             </Button>
           </div>
         </div>
         <div className="space-y-2">
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
-                    <Package className="h-4 w-4 text-muted-foreground" />
+          {filteredRequests.map((request) => (
+            <Card key={request.id}>
+              <CardContent className="p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                      {request.icon === "Package" ? (
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Building className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-medium text-foreground">{request.title}</div>
+                      <div className="text-sm text-muted-foreground">Объект: {request.object}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-foreground">Цемент М400</div>
-                    <div className="text-sm text-muted-foreground">Объект: ЖК &quot;Солнечный&quot;</div>
-                  </div>
+                  <Badge className={
+                    request.status === "В работе" 
+                      ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                      : request.status === "Выполнено"
+                      ? "bg-green-100 text-green-800 border-green-200"
+                      : "bg-gray-100 text-gray-800 border-gray-200"
+                  }>
+                    {request.status === "В работе" ? (
+                      <Clock className="h-3 w-3 mr-1" />
+                    ) : request.status === "Выполнено" ? (
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                    ) : (
+                      <Clock className="h-3 w-3 mr-1" />
+                    )}
+                    {request.status}
+                  </Badge>
                 </div>
-                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
-                  <Clock className="h-3 w-3 mr-1" />
-                  В работе
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
-                    <Building className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-foreground">Арматура А500С</div>
-                    <div className="text-sm text-muted-foreground">Объект: Офисный центр</div>
-                  </div>
-                </div>
-                <Badge className="bg-green-100 text-green-800 border-green-200">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Выполнено
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-foreground">Кирпич керамический</div>
-                    <div className="text-sm text-muted-foreground">Объект: Школа №15</div>
-                  </div>
-                </div>
-                <Badge className="bg-gray-100 text-gray-800 border-gray-200">
-                  <Clock className="h-3 w-3 mr-1" />
-                  Отправлена
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
         </div>
       </div>
