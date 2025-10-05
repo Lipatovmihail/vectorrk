@@ -41,6 +41,111 @@ export default function RequestPage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  // Функция для получения Telegram данных (как в sellerkit)
+  const getTelegramData = () => {
+    let telegramId = null;
+    let initData = null;
+    
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      // Получаем initData для валидации
+      initData = window.Telegram.WebApp.initData || null;
+      
+      // Способ 1: через initDataUnsafe
+      if (window.Telegram.WebApp.initDataUnsafe?.user?.id) {
+        telegramId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+      }
+      
+      // Способ 2: через initData (строка) - если не нашли через initDataUnsafe
+      if (!telegramId && initData) {
+        try {
+          const params = new URLSearchParams(initData);
+          const userParam = params.get('user');
+          if (userParam) {
+            const user = JSON.parse(decodeURIComponent(userParam));
+            if (user.id) {
+              telegramId = user.id.toString();
+            }
+          }
+        } catch (error) {
+          console.error('Ошибка парсинга initData:', error);
+        }
+      }
+      
+      // Способ 3: через localStorage (если сохранен ранее)
+      if (!telegramId) {
+        const savedTelegramId = localStorage.getItem('telegram_id');
+        if (savedTelegramId) {
+          telegramId = savedTelegramId;
+        }
+      }
+    }
+    
+    return { telegram_id: telegramId, initData };
+  }
+
+  // Функция для конвертации blob URL в base64
+
+  const handleSubmitRequest = async () => {
+    try {
+      const { telegram_id, initData } = getTelegramData();
+      
+      // Получаем московское время
+      const moscowTime = new Date().toLocaleString("ru-RU", {
+        timeZone: "Europe/Moscow",
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      // Проверяем, есть ли Telegram WebApp
+      const isTelegramWebApp = typeof window !== 'undefined' && window.Telegram?.WebApp;
+      
+      // Отправляем данные через Telegram WebApp
+      const requestData = {
+        request: {
+          orderNumber: formData.orderNumber,
+          objectName: formData.objectName,
+          objectAddress: formData.objectAddress,
+          deliveryDate: formData.deliveryDate ? format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru }) : null,
+          deliveryTime: formData.deliveryTime,
+          materials: formData.materials,
+          photos: formData.photos // Отправляем blob URLs напрямую
+        },
+        timestamp: moscowTime,
+        page: "request-form",
+        mode: "submit",
+        telegram_id: telegram_id,
+        initData: initData
+      };
+
+      if (isTelegramWebApp) {
+        // Используем Telegram WebApp для отправки файлов
+        console.log('📱 Используем Telegram WebApp для отправки файлов...');
+        
+        // Отправляем через Telegram WebApp
+        window.Telegram?.WebApp?.sendData(JSON.stringify(requestData));
+        
+        alert('Заявка отправлена через Telegram!');
+        window.location.href = '/';
+        return;
+      } else {
+        // Fallback: для обычного браузера показываем сообщение
+        alert('Это приложение предназначено для использования в Telegram. Пожалуйста, откройте его через Telegram бота.');
+        return;
+      }
+    } catch (error) {
+      console.error('❌ Ошибка при отправке заявки:', error);
+      console.error('❌ Тип ошибки:', error instanceof Error ? error.constructor.name : 'Unknown');
+      console.error('❌ Сообщение ошибки:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ Стек ошибки:', error instanceof Error ? error.stack : 'No stack trace');
+      
+      alert(`Ошибка при отправке заявки: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
   const nextStep = () => {
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1)
@@ -62,6 +167,60 @@ export default function RequestPage() {
       setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newPhotos] }))
     }
   }
+
+  // Telegram WebApp file upload
+  const handleTelegramPhotoUpload = () => {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      // Запрашиваем разрешение на запись файлов
+      window.Telegram.WebApp.requestWriteAccess();
+      
+      // Показываем нативный интерфейс загрузки файлов
+      window.Telegram.WebApp.showPopup({
+        title: 'Выберите фото',
+        message: 'Выберите фотографии для заявки',
+        buttons: [
+          {
+            id: 'camera',
+            type: 'default',
+            text: 'Камера'
+          },
+          {
+            id: 'gallery',
+            type: 'default', 
+            text: 'Галерея'
+          },
+          {
+            id: 'cancel',
+            type: 'cancel',
+            text: 'Отмена'
+          }
+        ]
+      }, (buttonId) => {
+        if (buttonId === 'camera' || buttonId === 'gallery') {
+          // Открываем нативный интерфейс выбора файлов
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.multiple = true;
+          input.accept = 'image/*';
+          input.onchange = (e) => {
+            const files = (e.target as HTMLInputElement).files;
+            if (files) {
+              const newPhotos = Array.from(files).map(file => URL.createObjectURL(file));
+              setFormData(prev => ({
+                ...prev,
+                photos: [...prev.photos, ...newPhotos]
+              }));
+            }
+          };
+          input.click();
+        }
+      });
+    } else {
+      // Fallback для обычного браузера
+      const input = document.getElementById('photo-upload') as HTMLInputElement;
+      input?.click();
+    }
+  };
 
   const removePhoto = (index: number) => {
     setFormData(prev => ({ 
@@ -148,7 +307,7 @@ export default function RequestPage() {
             <Button variant="outline" className="flex-1 h-12" onClick={() => setShowConfirmation(false)}>
               Редактировать
             </Button>
-            <Button className="flex-1 h-12">
+            <Button className="flex-1 h-12" onClick={handleSubmitRequest}>
               <Check className="h-4 w-4 mr-2" />
               Отправить заявку
             </Button>
@@ -273,11 +432,9 @@ export default function RequestPage() {
                     className="hidden"
                     id="photo-upload"
                   />
-                  <Button asChild>
-                    <label htmlFor="photo-upload" className="cursor-pointer">
-                      Выбрать фото
-                    </label>
-                    </Button>
+                  <Button onClick={handleTelegramPhotoUpload}>
+                    Выбрать фото
+                  </Button>
                 </div>
                 
                 {formData.photos.length > 0 && (
