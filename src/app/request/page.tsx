@@ -79,7 +79,8 @@ export default function RequestPage() {
                 last_name: telegramUser.last_name,
                 username: telegramUser.username,
                 language_code: telegramUser.language_code,
-                is_premium: telegramUser.is_premium
+                is_premium: telegramUser.is_premium,
+                photo_url: telegramUser.photo_url
               } : null,
               timestamp: new Date().toISOString(),
               action: "webapp_initialized"
@@ -219,7 +220,8 @@ export default function RequestPage() {
           last_name: telegramUser.last_name,
           username: telegramUser.username,
           language_code: telegramUser.language_code,
-          is_premium: telegramUser.is_premium
+          is_premium: telegramUser.is_premium,
+          photo_url: telegramUser.photo_url
         } : null
       };
 
@@ -235,6 +237,20 @@ export default function RequestPage() {
       if (isTelegramWebApp) {
         // Используем Telegram WebApp для отправки файлов
         console.log('📱 Используем Telegram WebApp для отправки файлов...');
+        
+        // Отправляем данные в n8n webhook (как в sellerkit)
+        try {
+          const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData),
+          });
+          
+          console.log('📤 Заявка отправлена в n8n webhook:', requestData);
+          console.log('📦 Ответ от n8n:', await response.json());
+        } catch (error) {
+          console.error('❌ Ошибка отправки в n8n:', error);
+        }
         
         // Отправляем через Telegram WebApp
         window.Telegram?.WebApp?.sendData(JSON.stringify(requestData));
@@ -560,7 +576,7 @@ export default function RequestPage() {
                   />
                   <Button onClick={handleTelegramPhotoUpload}>
                     Выбрать фото
-                  </Button>
+                    </Button>
                 </div>
                 
                 {formData.photos.length > 0 && (
