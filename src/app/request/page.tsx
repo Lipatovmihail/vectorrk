@@ -167,44 +167,8 @@ export default function RequestPage() {
           localStorage.setItem('telegram_id', telegramId.toString());
           console.log('💾 Telegram ID сохранен в localStorage:', telegramId);
           
-          // ★ NEW: Отправка данных в n8n webhook (как в sellerkit)
-          try {
-            const dataToSend = {
-              page: "request-form",
-              mode: "initialized",
-              telegram_id: telegramId,
-              initData: window.Telegram.WebApp.initData,
-              telegram_user: telegramUser ? {
-                id: telegramUser.id,
-                first_name: telegramUser.first_name,
-                last_name: telegramUser.last_name,
-                username: telegramUser.username,
-                language_code: telegramUser.language_code,
-                is_premium: telegramUser.is_premium,
-                photo_url: telegramUser.photo_url
-              } : null,
-              timestamp: new Date().toISOString(),
-              action: "webapp_initialized"
-            };
-            
-            // Отправляем в n8n webhook
-            const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(dataToSend),
-            });
-            
-            console.log('📤 Данные отправлены в n8n webhook:', dataToSend);
-            console.log('📦 Ответ от n8n:', await response.json());
-            
-            // По желанию — параллельно слать боту:
-            window.Telegram.WebApp.sendData(JSON.stringify({
-              telegram_id: telegramId,
-              action: 'webapp_initialized'
-            }));
-          } catch (error) {
-            console.error('❌ Ошибка отправки в n8n:', error);
-          }
+          // Telegram WebApp инициализирован, данные сохранены
+          console.log('✅ Telegram WebApp инициализирован успешно');
         }
         } else {
           // Fallback для локального тестирования
