@@ -5,89 +5,100 @@
    ▲ Next.js 15.5.4 (Turbopack)
    - Local:        http://localhost:3000
    - Network:      http://10.242.29.80:3000
+   - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1114ms
- ○ Compiling /request ...
- ✓ Compiled /request in 3s
- GET /request 200 in 3302ms
- ✓ Compiled /favicon.ico in 416ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 708ms
- ✓ Compiled in 209ms
- ✓ Compiled in 113ms
- ✓ Compiled in 104ms
- ✓ Compiled in 98ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ ReferenceError: googleDriveFiles is not defined
-    at RequestPage (src/app/request/page.tsx:587:10)
-  585 |           🔍 Отладка: {telegramDebug}
-  586 |         </div>
-> 587 |         {googleDriveFiles.length > 0 && (
-      |          ^
-  588 |           <div className="text-xs text-green-800 mt-1">
-  589 |             📸 Загружено фото в Google Drive: {googleDriveFiles.length} шт.
-  590 |             {googleDriveFiles.map((file, index) => ( {
-  digest: '3721160293'
-}
- GET /request 500 in 312ms
- GET /favicon.ico 200 in 489ms
- ✓ Compiled in 89ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ ReferenceError: googleDriveFiles is not defined
-    at RequestPage (src/app/request/page.tsx:581:10)
-  579 |           🔍 Отладка: {telegramDebug}
-  580 |         </div>
-> 581 |         {googleDriveFiles.length > 0 && (
-      |          ^
-  582 |           <div className="text-xs text-green-800 mt-1">
-  583 |             📸 Загружено фото в Google Drive: {googleDriveFiles.length} шт.
-  584 |             {googleDriveFiles.map((file, index) => ( {
-  digest: '3721160293'
-}
- GET /request 500 in 267ms
- GET /favicon.ico 200 in 271ms
- ✓ Compiled in 106ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ ReferenceError: googleDriveFiles is not defined
-    at RequestPage (src/app/request/page.tsx:581:10)
-  579 |           🔍 Отладка: {telegramDebug}
-  580 |         </div>
-> 581 |         {googleDriveFiles.length > 0 && (
-      |          ^
-  582 |           <div className="text-xs text-green-800 mt-1">
-  583 |             📸 Загружено фото в Google Drive: {googleDriveFiles.length} шт.
-  584 |             {googleDriveFiles.map((file, index) => ( {
-  digest: '3721160293'
-}
- GET /request 500 in 193ms
- GET /favicon.ico 200 in 303ms
- ✓ Compiled in 98ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ ReferenceError: googleDriveFiles is not defined
-    at RequestPage (src/app/request/page.tsx:581:10)
-  579 |           🔍 Отладка: {telegramDebug}
-  580 |         </div>
-> 581 |         {googleDriveFiles.length > 0 && (
-      |          ^
-  582 |           <div className="text-xs text-green-800 mt-1">
-  583 |             📸 Загружено фото в Google Drive: {googleDriveFiles.length} шт.
-  584 |             {googleDriveFiles.map((file, index) => ( {
-  digest: '3721160293'
-}
- GET /request 500 in 283ms
- GET /favicon.ico 200 in 245ms
- ✓ Compiled in 99ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /request 200 in 259ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 301ms
- GET /request 200 in 118ms
- GET /request 200 in 43ms
- ✓ Compiled in 86ms
- ✓ Compiled in 137ms
- ✓ Compiled in 73ms
- ✓ Compiled in 82ms
- GET /request 200 in 111ms
- GET /request 200 in 36ms
- ✓ Compiled in 121ms
- ✓ Compiled in 95ms
- ✓ Compiled in 72ms
+ ✓ Ready in 1137ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.6s
+ GET / 200 in 2913ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ✓ Compiled /favicon.ico in 354ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 880ms
+ ✓ Compiled in 112ms
+ GET / 200 in 471ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 341ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ ✓ Compiled in 191ms
+ GET / 200 in 897ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 347ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ GET / 200 in 1038ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 543ms
+ GET / 200 in 403ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ GET / 200 in 447ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 342ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ GET / 200 in 441ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 326ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ ✓ Compiled in 171ms
+ ✓ Compiled in 179ms
+ ✓ Compiled in 280ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center

@@ -6,10 +6,21 @@ import { Badge } from "@/components/ui/badge"
 import { Building, Package, Clock, CheckCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { toast } from "sonner"
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState("Все")
+  
+  // Проверяем URL параметры для показа toast уведомлений
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      toast.success('Заявка успешно отправлена!');
+      // Очищаем URL от параметра
+      window.history.replaceState({}, '', '/');
+    }
+  }, []);
   
   // Данные заявок
   const requests = [
