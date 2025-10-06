@@ -1,94 +1,89 @@
 import { NextRequest, NextResponse } from 'next/server';
-import FormData from 'form-data';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
     const { photos, orderNumber, objectName } = await request.json();
-    
-    if (!photos || photos.length === 0) {
+
+    if (!photos?.length) {
       return NextResponse.json({ success: true, files: [] });
     }
 
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-    const CHAT_ID = process.env.TELEGRAM_CHAT_ID; // ID чата для сохранения файлов
+    const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
     
     if (!BOT_TOKEN || !CHAT_ID) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Telegram bot credentials not configured' 
-      }, { status: 500 });
+      return NextResponse.json(
+        { success: false, error: 'Telegram bot credentials not configured' },
+        { status: 500 }
+      );
     }
 
-    const uploadedFiles = [];
+    const uploadedFiles: Array<{
+      index: number;
+      fileId: string;
+      messageId: number;
+      caption: string;
+    }> = [];
 
     for (let i = 0; i < photos.length; i++) {
-      const base64Data = photos[i];
-      
-      // Извлекаем base64 строку
-      const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-      if (!matches || matches.length !== 3) {
-        console.warn(`⚠️ Некорректный формат base64 для фото ${i + 1}`);
+      const base64 = String(photos[i]);
+      const m = base64.match(/^data:(.+);base64,(.+)$/);
+      if (!m) {
+        console.warn(`⚠️ base64 не распознан для фото ${i + 1}`);
         continue;
       }
-      
-      const mimeType = matches[1];
-      const base64Image = matches[2];
-      const buffer = Buffer.from(base64Image, 'base64');
-      
-      // Создаем FormData для отправки в Telegram (используем form-data библиотеку)
-      const formData = new FormData();
-      const fileName = `photo_${i + 1}_${orderNumber || 'request'}_${Date.now()}.${mimeType.split('/')[1] || 'jpg'}`;
-      
-      // ✅ Исправление: используем Buffer напрямую с правильными опциями
-      formData.append('photo', buffer, {
-        filename: fileName,
-        contentType: mimeType,
+
+      const mime = m[1];
+      const raw = m[2];
+      const buffer = Buffer.from(raw, 'base64');
+
+      // Ключевой момент — нативный Blob + нативный FormData
+      const blob = new Blob([buffer], { type: mime });
+      const ext = (mime.split('/')[1] || 'jpg').toLowerCase();
+      const fileName = `photo_${i + 1}_${orderNumber || 'request'}_${Date.now()}.${ext}`;
+
+      const form = new FormData();
+      form.append('chat_id', CHAT_ID);
+      form.append('caption', `Фото ${i + 1} для заявки ${orderNumber || 'Без номера'} - ${objectName || 'Без объекта'}`);
+      form.append('photo', blob, fileName);
+
+      const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+        method: 'POST',
+        body: form, // заголовки выставятся автоматически
       });
-      formData.append('chat_id', CHAT_ID);
-      formData.append('caption', `Фото ${i + 1} для заявки ${orderNumber || 'Без номера'} - ${objectName || 'Без объекта'}`);
 
-      try {
-        // Отправляем файл в Telegram
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-          method: 'POST',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          body: formData as any, // Принудительное приведение типа для Node.js FormData
-        });
+      const result = await tgRes.json();
 
-        const result = await response.json();
-        
-        if (result.ok) {
-          const fileId = result.result.photo[result.result.photo.length - 1].file_id; // Берем самое большое разрешение
-          const fileUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`;
-          
-          uploadedFiles.push({
-            index: i + 1,
-            fileId: fileId,
-            fileUrl: fileUrl,
-            messageId: result.result.message_id,
-            caption: `Фото ${i + 1} для заявки ${orderNumber || 'Без номера'}`
-          });
-          
-          console.log(`✅ Фото ${i + 1} загружено в Telegram:`, fileId);
-        } else {
-          console.error(`❌ Ошибка загрузки фото ${i + 1}:`, result);
-        }
-      } catch (error) {
-        console.error(`❌ Ошибка отправки фото ${i + 1} в Telegram:`, error);
+      if (!tgRes.ok || !result?.ok) {
+        // Пробрасываем ошибку наружу, чтобы на фронте это было видно
+        return NextResponse.json(
+          { success: false, error: result?.description || 'Telegram upload failed', tg: result },
+          { status: 400 }
+        );
       }
+
+      const sizes = result.result.photo || [];
+      const fileId = sizes[sizes.length - 1]?.file_id;
+      uploadedFiles.push({
+        index: i + 1,
+        fileId,
+        messageId: result.result.message_id,
+        caption: `Фото ${i + 1} для заявки ${orderNumber || 'Без номера'}`
+      });
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       files: uploadedFiles,
-      message: `Загружено ${uploadedFiles.length} из ${photos.length} фото`
+      message: `Загружено ${uploadedFiles.length} из ${photos.length} фото`,
     });
-
-  } catch (error) {
-    console.error('❌ Ошибка в API route upload-to-telegram:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+  } catch (err) {
+    console.error('❌ upload-to-telegram error:', err);
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }

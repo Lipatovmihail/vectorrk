@@ -311,8 +311,24 @@ export default function RequestPage() {
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (files) {
+      // Проверяем размер файлов (максимум 2MB на файл)
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
+      
+      if (oversizedFiles.length > 0) {
+        alert(`Некоторые файлы слишком большие (максимум 2MB). Пропущено файлов: ${oversizedFiles.length}`);
+      }
+      
+      // Фильтруем файлы по размеру
+      const validFiles = Array.from(files).filter(file => file.size <= maxSize);
+      
+      if (validFiles.length === 0) {
+        alert('Все файлы слишком большие. Максимальный размер: 2MB');
+        return;
+      }
+      
       // Создаем blob URLs для превью
-      const newPhotos = Array.from(files).map(file => URL.createObjectURL(file))
+      const newPhotos = validFiles.map(file => URL.createObjectURL(file))
       setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newPhotos] }))
       
       // Сразу загружаем в Telegram
@@ -321,7 +337,7 @@ export default function RequestPage() {
       try {
         // Конвертируем файлы в base64
         const photosBase64 = await Promise.all(
-          Array.from(files).map(async (file) => {
+          validFiles.map(async (file) => {
             return new Promise<string>((resolve) => {
               const reader = new FileReader()
               reader.onloadend = () => resolve(reader.result as string)
@@ -343,13 +359,23 @@ export default function RequestPage() {
           })
         })
         
-        const telegramData = await telegramResponse.json()
-        if (telegramData.success) {
-          setTelegramFileIds(prev => [...prev, ...telegramData.files])
-          console.log('✅ Фото загружены в Telegram:', telegramData.files)
-        } else {
-          console.error('❌ Ошибка загрузки в Telegram:', telegramData.error)
+        // Проверяем статус ответа
+        if (!telegramResponse.ok) {
+          const errText = await telegramResponse.text()
+          console.error('❌ TG upload failed (HTTP):', errText)
+          alert(`Ошибка загрузки фото: ${errText}`)
+          return
         }
+        
+        const telegramData = await telegramResponse.json()
+        if (!telegramData.success) {
+          console.error('❌ TG upload failed (API):', telegramData.error, telegramData.tg)
+          alert(`Ошибка загрузки фото: ${telegramData.error}`)
+          return
+        }
+        
+        setTelegramFileIds(prev => [...prev, ...telegramData.files])
+        console.log('✅ Фото загружены в Telegram:', telegramData.files)
       } catch (error) {
         console.error('❌ Ошибка при загрузке фото:', error)
       }
