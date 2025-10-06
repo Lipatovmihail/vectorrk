@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -13,6 +12,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
+import { toast } from "sonner"
 
 // утилита: Blob -> base64
 const blobToBase64 = (blob: Blob): Promise<string> =>
@@ -390,19 +390,21 @@ export default function RequestPage() {
           console.log('📦 Пустой ответ от n8n (это нормально)');
         }
         
-        alert('Заявка отправлена через Telegram!');
-        window.location.href = '/';
+        toast.success('Заявка успешно отправлена!');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
         return;
       } catch (error) {
         console.error('❌ Ошибка отправки в n8n:', error);
         const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
-        alert(`Ошибка при отправке заявки: ${errorMessage}. Попробуйте еще раз.`);
+        toast.error(`Ошибка при отправке заявки: ${errorMessage}. Попробуйте еще раз.`);
         return;
       }
       } else {
         // Fallback: для обычного браузера показываем сообщение
         console.log('⚠️ Telegram WebApp не обнаружен, показываем сообщение');
-        alert('Это приложение предназначено для использования в Telegram. Пожалуйста, откройте его через Telegram бота.');
+        toast.warning('Это приложение предназначено для использования в Telegram. Пожалуйста, откройте его через Telegram бота.');
         return;
       }
     } catch (error) {
@@ -411,7 +413,7 @@ export default function RequestPage() {
       console.error('❌ Сообщение ошибки:', error instanceof Error ? error.message : 'Unknown error');
       console.error('❌ Стек ошибки:', error instanceof Error ? error.stack : 'No stack trace');
       
-      alert(`Ошибка при отправке заявки: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Ошибка при отправке заявки: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -499,6 +501,8 @@ export default function RequestPage() {
           setUploadProgress(prev => prev.map((item, idx) => 
             idx === progressIndex ? { ...item, status: 'error', error: 'Ошибка загрузки в Telegram' } : item
           ));
+          
+          toast.error('Ошибка при загрузке фото в Telegram');
           continue;
         }
         
@@ -516,6 +520,7 @@ export default function RequestPage() {
           ));
           
           console.log('✅ Фото загружено в Telegram Bot API:', data.file_id);
+          toast.success(`Фото "${file.name}" успешно загружено`);
         } else {
           console.error('TG API error:', data.error);
           
@@ -523,6 +528,8 @@ export default function RequestPage() {
           setUploadProgress(prev => prev.map((item, idx) => 
             idx === progressIndex ? { ...item, status: 'error', error: data.error || 'Неизвестная ошибка' } : item
           ));
+          
+          toast.error(`Ошибка загрузки фото: ${data.error || 'Неизвестная ошибка'}`);
         }
       } catch (error) {
         console.error('❌ Ошибка при обработке файла:', error);
@@ -535,11 +542,21 @@ export default function RequestPage() {
             error: error instanceof Error ? error.message : 'Неизвестная ошибка' 
           } : item
         ));
+        
+        toast.error(`Ошибка при обработке файла ${file.name}`);
       }
     }
     
     // Разблокируем кнопки после завершения всех загрузок
     setIsUploading(false);
+    
+    // Показываем общий toast о завершении загрузки
+    const completedCount = uploadProgress.filter(p => p.status === 'completed').length;
+    const totalCount = uploadProgress.length;
+    
+    if (completedCount > 0) {
+      toast.success(`Загружено ${completedCount} из ${totalCount} фото`);
+    }
   };
 
   // Скрытый инпут использует общий обработчик
@@ -664,12 +681,10 @@ export default function RequestPage() {
           )}
         </div>
 
-        <div className="px-4 py-4 space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Данные заявки</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+        <div className="px-4 py-2 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold mb-3">Данные заявки</h2>
+            <div className="space-y-3">
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Номер наряд-заказа</Label>
                 <p className="text-base">{formData.orderNumber || "Не указано"}</p>
@@ -743,8 +758,8 @@ export default function RequestPage() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           <div className="flex gap-3 pb-6">
             <Button 
@@ -862,71 +877,74 @@ export default function RequestPage() {
         </div>
       </div>
 
-      <div className="px-4 py-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              [{currentStep}/6] {currentStepData.title}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {currentStep === 6 
-                ? "Можно пропустить шаг, нажав на кнопку \"Завершить\""
-                : currentStep === 5
-                ? "Укажите необходимые материалы списком"
-                : `Например, "${currentStepData.placeholder}"`
-              }
-            </p>
-          </CardHeader>
-          <CardContent>
-            {currentStep === 4 ? (
-              <div className="space-y-4 min-h-[200px] flex flex-col">
-            <div className="flex-1 flex flex-col justify-center">
-                  <Label className="text-sm font-medium mb-2 block">Выберите дату</Label>
-                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start text-left font-normal flex-1"
-                      >
-                        <Calendar className="mr-2 h-4 w-4" />
-                        {formData.deliveryDate ? (
-                          format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })
-                        ) : (
-                          <span>Выберите дату</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <CalendarComponent
-                        mode="single"
-                        selected={formData.deliveryDate || undefined}
-                        onSelect={(date) => {
-                          setFormData(prev => ({ ...prev, deliveryDate: date || null }))
-                          setCalendarOpen(false)
-                        }}
-                        initialFocus
-                        locale={ru}
-                      />
-                    </PopoverContent>
-                  </Popover>
-            </div>
-            <div className="flex-1 flex flex-col justify-center">
-                  <Label className="text-sm font-medium mb-2 block">Время (необязательно)</Label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input 
-                      type="time"
-                      placeholder="16:10"
-                      value={formData.deliveryTime}
-                      onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
-                      onKeyPress={handleKeyPress}
-                      className="pl-10 h-12"
-              />
-            </div>
+      <div className="px-4 py-2">
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-2xl font-bold text-primary">{currentStep}</span>
+            <span className="text-sm text-muted-foreground">из 6</span>
+          </div>
+          <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            {currentStep === 6 
+              ? "Можно пропустить шаг, нажав на кнопку \"Завершить\""
+              : currentStep === 5
+              ? "Укажите необходимые материалы списком"
+              : `Например, "${currentStepData.placeholder}"`
+            }
+          </p>
+        </div>
+        <div>
+          {currentStep === 4 ? (
+            <div className="space-y-4 min-h-[150px] flex flex-col">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <Label className="text-sm font-medium mb-2 block">Выберите дату</Label>
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal h-12"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
+                      {formData.deliveryDate ? (
+                        format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })
+                      ) : (
+                        <span>Выберите дату</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <CalendarComponent
+                      mode="single"
+                      selected={formData.deliveryDate || undefined}
+                      onSelect={(date) => {
+                        setFormData(prev => ({ ...prev, deliveryDate: date || null }))
+                        setCalendarOpen(false)
+                      }}
+                      initialFocus
+                      locale={ru}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="flex-1">
+                <Label className="text-sm font-medium mb-2 block">Время (необязательно)</Label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input 
+                    type="time"
+                    placeholder="16:10"
+                    value={formData.deliveryTime}
+                    onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                    onKeyPress={handleKeyPress}
+                    className="pl-10 h-12"
+                  />
+                </div>
+              </div>
             </div>
             </div>
             ) : currentStep === 5 ? (
-              <div className="min-h-[200px] flex flex-col">
+              <div className="min-h-[150px] flex flex-col">
               <Textarea 
                   placeholder={currentStepData.placeholder}
                   value={formData.materials}
@@ -936,7 +954,7 @@ export default function RequestPage() {
               />
             </div>
             ) : currentStep === 6 ? (
-              <div className="space-y-4 min-h-[200px]">
+              <div className="space-y-4 min-h-[150px]">
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                   <p className="text-gray-600 mb-4">Добавьте фотографии</p>
@@ -1020,7 +1038,7 @@ export default function RequestPage() {
                 )}
               </div>
             ) : (
-              <div className="min-h-[200px] flex flex-col">
+              <div className="min-h-[150px] flex flex-col">
                 <Input
                   placeholder={currentStepData.placeholder}
                   value={formData[currentStepData.field as keyof typeof formData] as string}
@@ -1030,8 +1048,7 @@ export default function RequestPage() {
                 />
               </div>
             )}
-          </CardContent>
-        </Card>
+        </div>
 
         {/* Navigation */}
         <div className="flex gap-3 mt-6 pb-6">
