@@ -38,23 +38,23 @@ vercel --prod
 
 ## Настройки окружения
 
-**Для загрузки фото в Telegram требуется:**
+**Для загрузки фото в Google Drive требуется:**
 
 В Vercel Dashboard → Settings → Environment Variables добавить:
 
 ```env
-TELEGRAM_BOT_TOKEN=your_bot_token_here
-TELEGRAM_CHAT_ID=your_chat_id_here
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n"
 ```
 
 **Как получить:**
-1. **BOT_TOKEN**: Создайте бота через @BotFather в Telegram
-2. **CHAT_ID**: ID чата для сохранения файлов (можно использовать ваш личный ID)
+1. **Service Account**: `parser@liquid-agility-329915.iam.gserviceaccount.com`
+2. **Private Key**: Скачайте JSON ключ из Google Cloud Console
+3. **Папка**: `https://drive.google.com/drive/folders/1zmYccS5V0MsUoXauVLYhviYt3v1dkPey`
 
 **Без этих переменных:**
 - ✅ Приложение работает
 - ✅ Отправка заявок работает  
-- ❌ Фото не загружаются в Telegram (остаются blob URLs)
+- ❌ Фото не загружаются в Google Drive (остаются blob URLs)
 
 ## Проверка деплоя
 

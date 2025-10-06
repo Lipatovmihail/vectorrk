@@ -28,12 +28,12 @@ export default function RequestPage() {
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [telegramDebug, setTelegramDebug] = useState<string>('')
   
-  // Состояние для хранения file_id от Telegram
-  const [telegramFileIds, setTelegramFileIds] = useState<Array<{
+  // Состояние для хранения file_id от Google Drive
+  const [googleDriveFiles, setGoogleDriveFiles] = useState<Array<{
     index: number;
     fileId: string;
+    fileName: string;
     fileUrl: string;
-    messageId: number;
     caption: string;
   }>>([])
 
@@ -114,10 +114,15 @@ export default function RequestPage() {
             console.error('❌ Ошибка отправки в n8n:', error);
           }
         }
-      } else {
-        setTelegramDebug('Не в Telegram WebApp');
-        console.log('❌ Telegram WebApp не инициализирован');
-      }
+        } else {
+          // Fallback для локального тестирования
+          const mockTelegramId = 123456789; // Тестовый ID
+          setTelegramDebug(`Локальное тестирование | Mock ID: ${mockTelegramId}`);
+          console.log('⚠️ Telegram WebApp не обнаружен, используем mock данные для тестирования');
+          
+          // Сохраняем mock ID в localStorage для тестирования
+          localStorage.setItem('telegram_id', mockTelegramId.toString());
+        }
     };
     
     initTelegramWebApp();
@@ -252,11 +257,11 @@ export default function RequestPage() {
         ...requestData,
         request: {
           ...requestData.request,
-          photos: telegramFileIds // Используем уже загруженные file_id
+          photos: googleDriveFiles // Используем уже загруженные file_id
         }
       };
       
-      console.log('📤 Используем уже загруженные file_id:', telegramFileIds);
+      console.log('📤 Используем уже загруженные file_id:', googleDriveFiles);
 
       // Отправляем данные в n8n webhook (как в sellerkit)
       try {
@@ -331,8 +336,8 @@ export default function RequestPage() {
       const newPhotos = validFiles.map(file => URL.createObjectURL(file))
       setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newPhotos] }))
       
-      // Сразу загружаем в Telegram
-      console.log('📸 Начинаем загрузку фото в Telegram...')
+      // Сразу загружаем в Google Drive
+      console.log('📸 Начинаем загрузку фото в Google Drive...')
       
       try {
         // Конвертируем файлы в base64
@@ -346,8 +351,8 @@ export default function RequestPage() {
           })
         )
         
-        // Отправляем в Telegram
-        const telegramResponse = await fetch('/api/upload-to-telegram', {
+        // Отправляем в Google Drive
+        const driveResponse = await fetch('/api/upload-to-drive', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -360,22 +365,22 @@ export default function RequestPage() {
         })
         
         // Проверяем статус ответа
-        if (!telegramResponse.ok) {
-          const errText = await telegramResponse.text()
-          console.error('❌ TG upload failed (HTTP):', errText)
+        if (!driveResponse.ok) {
+          const errText = await driveResponse.text()
+          console.error('❌ Google Drive upload failed (HTTP):', errText)
           alert(`Ошибка загрузки фото: ${errText}`)
           return
         }
         
-        const telegramData = await telegramResponse.json()
-        if (!telegramData.success) {
-          console.error('❌ TG upload failed (API):', telegramData.error, telegramData.tg)
-          alert(`Ошибка загрузки фото: ${telegramData.error}`)
+        const driveData = await driveResponse.json()
+        if (!driveData.success) {
+          console.error('❌ Google Drive upload failed (API):', driveData.error)
+          alert(`Ошибка загрузки фото: ${driveData.error}`)
           return
         }
         
-        setTelegramFileIds(prev => [...prev, ...telegramData.files])
-        console.log('✅ Фото загружены в Telegram:', telegramData.files)
+        setGoogleDriveFiles(prev => [...prev, ...driveData.files])
+        console.log('✅ Фото загружены в Google Drive:', driveData.files)
       } catch (error) {
         console.error('❌ Ошибка при загрузке фото:', error)
       }
@@ -385,10 +390,8 @@ export default function RequestPage() {
   // Telegram WebApp file upload
   const handleTelegramPhotoUpload = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-      // Запрашиваем разрешение на запись файлов
-      window.Telegram.WebApp.requestWriteAccess();
-      
       // Показываем нативный интерфейс загрузки файлов
+      // Примечание: requestWriteAccess не поддерживается в версии 6.0
       window.Telegram.WebApp.showPopup({
         title: 'Выберите фото',
         message: 'Выберите фотографии для заявки',
@@ -443,7 +446,7 @@ export default function RequestPage() {
     }))
     
     // Также удаляем соответствующий file_id
-    setTelegramFileIds(prev => prev.filter((_, i) => i !== index))
+    setGoogleDriveFiles(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -473,10 +476,10 @@ export default function RequestPage() {
           <div className="text-xs text-yellow-800">
             🔍 Отладка: {telegramDebug}
           </div>
-          {telegramFileIds.length > 0 && (
+          {googleDriveFiles.length > 0 && (
             <div className="text-xs text-green-800 mt-1">
-              📸 Загружено фото в Telegram: {telegramFileIds.length} шт.
-              {telegramFileIds.map((file, index) => (
+              📸 Загружено фото в Google Drive: {googleDriveFiles.length} шт.
+              {googleDriveFiles.map((file, index) => (
                 <div key={index} className="ml-2">
                   • Фото {file.index}: {file.fileId.substring(0, 20)}...
                 </div>
@@ -575,10 +578,10 @@ export default function RequestPage() {
         <div className="text-xs text-yellow-800">
           🔍 Отладка: {telegramDebug}
         </div>
-        {telegramFileIds.length > 0 && (
+        {googleDriveFiles.length > 0 && (
           <div className="text-xs text-green-800 mt-1">
-            📸 Загружено фото в Telegram: {telegramFileIds.length} шт.
-            {telegramFileIds.map((file, index) => (
+            📸 Загружено фото в Google Drive: {googleDriveFiles.length} шт.
+            {googleDriveFiles.map((file, index) => (
               <div key={index} className="ml-2">
                 • Фото {file.index}: {file.fileId.substring(0, 20)}...
               </div>
