@@ -14,6 +14,93 @@ import Image from "next/image"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
 
+// утилита: Blob -> base64
+const blobToBase64 = (blob: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onloadend = () => resolve(r.result as string);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+
+// утилита: File -> сжатый Blob (JPEG), < targetBytes
+async function compressImage(
+  file: File,
+  {
+    targetBytes = 1_500_000,       // ~1.5 МБ целевой размер
+    maxSide = 1600,                // длинная сторона (px)
+    initialQuality = 0.85,         // стартовое качество JPEG
+    minQuality = 0.5               // минимально допустимое
+  } = {}
+): Promise<Blob> {
+  // HEIC/HEIF лучше конвертить в JPEG (canvas не всегда умеет HEIC)
+  const mimeFallback = 'image/jpeg';
+
+  // Загружаем картинку с учётом EXIF-ориентации
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' }).catch(async () => {
+    // fallback через <img>
+    const src = URL.createObjectURL(file);
+    const img = await new Promise<HTMLImageElement>((res, rej) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const i = new (window as any).Image();
+      i.onload = () => res(i);
+      i.onerror = rej;
+      i.src = src;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(img, 0, 0);
+    const b = await new Promise<Blob>((res) => canvas.toBlob(b => res(b!), mimeFallback, 1));
+    URL.revokeObjectURL(src);
+    return createImageBitmap(b);
+  });
+
+  const { width, height } = bitmap;
+  let scale = Math.min(1, maxSide / Math.max(width, height));
+  let w = Math.max(1, Math.round(width * scale));
+  let h = Math.max(1, Math.round(height * scale));
+
+  // Создаём холст (OffscreenCanvas, если доступен)
+  const makeCanvas = (w: number, h: number) => {
+    if ('OffscreenCanvas' in window) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return new (window as any).OffscreenCanvas(w, h) as OffscreenCanvas;
+    }
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    return c;
+  };
+
+  let quality = initialQuality;
+  let blob: Blob;
+
+  for (let i = 0; i < 8; i++) { // до 8 итераций (качество/размер)
+    const canvas = makeCanvas(w, h);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ctx = (canvas as any).getContext('2d') as OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+
+    blob = 'convertToBlob' in canvas
+      ? await (canvas as OffscreenCanvas).convertToBlob({ type: 'image/jpeg', quality })
+      : await new Promise<Blob>((res) => (canvas as HTMLCanvasElement).toBlob(b => res(b!), 'image/jpeg', quality));
+
+    if (blob.size <= targetBytes) break;
+
+    // сначала опускаем качество, потом уменьшаем габариты
+    if (quality > minQuality) {
+      quality = Math.max(minQuality, quality - 0.1);
+    } else {
+      scale *= 0.85; // уменьшаем ширину/высоту
+      w = Math.max(320, Math.round(w * 0.85));
+      h = Math.max(320, Math.round(h * 0.85));
+    }
+  }
+
+  return blob!;
+}
+
 export default function RequestPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
@@ -333,55 +420,59 @@ export default function RequestPage() {
 
   // Общий обработчик файлов (и превью, и загрузка в Telegram → file_id)
   const processFilesAndUpload = async (files: FileList) => {
-    const maxSize = 2 * 1024 * 1024; // 2MB
-    const valid = Array.from(files).filter(f => f.size <= maxSize);
-    
-    if (!valid.length) {
-      alert('Все файлы слишком большие (макс. 2MB)'); 
-      return;
-    }
-
-    // Превью
-    const previews = valid.map(f => URL.createObjectURL(f));
+    // Показываем превью сразу (из исходников)
+    const previews = Array.from(files).map(f => URL.createObjectURL(f));
     setFormData(prev => ({ ...prev, photos: [...prev.photos, ...previews] }));
 
-    // По одному, чтобы не ловить rate limit 429
-    for (const file of valid) {
-      const base64: string = await new Promise(res => {
-        const r = new FileReader();
-        r.onloadend = () => res(r.result as string);
-        r.readAsDataURL(file);
-      });
+    for (const file of Array.from(files)) {
+      try {
+        console.log(`📸 Обрабатываем файл: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} МБ)`);
+        
+        // 1) сжимаем "под капотом"
+        const compressed = await compressImage(file, {
+          targetBytes: 1_600_000, // ≈1.6 МБ — комфортно для JSON base64
+          maxSide: 1600,          // визуально ок на телефоне
+          initialQuality: 0.85
+        });
 
-      const uploadRes = await fetch('/api/telegram-upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          file: base64,
-          fileName: file.name,
-          orderNumber: formData.orderNumber || 'Без номера',
-          objectName: formData.objectName || 'Без объекта'
-        }),
-      });
+        console.log(`📦 Сжато до: ${(compressed.size / 1024 / 1024).toFixed(1)} МБ`);
 
-      if (!uploadRes.ok) {
-        const txt = await uploadRes.text();
-        console.error('TG upload failed:', txt);
-        alert('Ошибка при загрузке фото в Telegram');
-        continue;
-      }
+        // 2) конвертим в base64
+        const base64 = await blobToBase64(compressed);
 
-      const data = await uploadRes.json();
-      if (data.success && data.file_id) {
-        setTelegramFiles(prev => [...prev, {
-          index: prev.length,
-          fileId: data.file_id,
-          fileName: file.name,
-        }]);
-        console.log('✅ Фото загружено в Telegram Bot API:', data.file_id);
-      } else {
-        console.error('TG API error:', data.error);
-        alert(`Ошибка загрузки фото: ${data.error}`);
+        // 3) шлём в Telegram API (твой роут /api/telegram-upload)
+        const resp = await fetch('/api/telegram-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            file: base64,
+            fileName: file.name.replace(/\.(heic|heif)$/i, '.jpg'),
+            orderNumber: formData.orderNumber || 'Без номера',
+            objectName: formData.objectName || 'Без объекта'
+          }),
+        });
+
+        if (!resp.ok) {
+          console.error('TG upload failed:', await resp.text());
+          alert('Ошибка при загрузке фото в Telegram');
+          continue;
+        }
+        
+        const data = await resp.json();
+        if (data.success && data.file_id) {
+          setTelegramFiles(prev => [...prev, {
+            index: prev.length,
+            fileId: data.file_id,
+            fileName: file.name
+          }]);
+          console.log('✅ Фото загружено в Telegram Bot API:', data.file_id);
+        } else {
+          console.error('TG API error:', data.error);
+          alert(`Ошибка загрузки фото: ${data.error}`);
+        }
+      } catch (error) {
+        console.error('❌ Ошибка при обработке файла:', error);
+        alert(`Ошибка при обработке файла ${file.name}`);
       }
     }
   };
@@ -464,6 +555,9 @@ export default function RequestPage() {
           {telegramFiles.length > 0 && (
             <div className="text-xs text-green-800 mt-1">
               📸 Загружено фото в Telegram Bot API: {telegramFiles.length} шт.
+              <div className="text-xs text-gray-600 ml-2">
+                💡 Фото автоматически сжаты до ~1.6 МБ
+              </div>
               {telegramFiles.map((file, index) => (
                 <div key={index} className="ml-2">
                   • Фото {file.index}: {file.fileId.substring(0, 20)}...
@@ -579,6 +673,9 @@ export default function RequestPage() {
         {telegramFiles.length > 0 && (
           <div className="text-xs text-green-800 mt-1">
             📸 Загружено фото в Telegram Bot API: {telegramFiles.length} шт.
+            <div className="text-xs text-gray-600 ml-2">
+              💡 Фото автоматически сжаты до ~1.6 МБ
+            </div>
             {telegramFiles.map((file, index) => (
               <div key={index} className="ml-2">
                 • Фото {file.index}: {file.fileId.substring(0, 20)}...
