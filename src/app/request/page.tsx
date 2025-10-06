@@ -270,14 +270,34 @@ export default function RequestPage() {
         });
         
         console.log('📤 Заявка отправлена в n8n webhook:', updatedRequestData);
-        console.log('📦 Ответ от n8n:', await response.json());
+        console.log('📦 Статус ответа от n8n:', response.status);
+        
+        // Проверяем статус ответа
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        // Проверяем, есть ли контент для парсинга
+        const responseText = await response.text();
+        console.log('📦 Текст ответа от n8n:', responseText);
+        
+        if (responseText.trim()) {
+          try {
+            const responseData = JSON.parse(responseText);
+            console.log('📦 JSON ответ от n8n:', responseData);
+          } catch (parseError) {
+            console.warn('⚠️ Ответ от n8n не является валидным JSON:', responseText);
+          }
+        } else {
+          console.log('📦 Пустой ответ от n8n (это нормально)');
+        }
         
         alert('Заявка отправлена через Telegram!');
         window.location.href = '/';
         return;
       } catch (error) {
         console.error('❌ Ошибка отправки в n8n:', error);
-        alert('Ошибка при отправке заявки. Попробуйте еще раз.');
+        alert(`Ошибка при отправке заявки: ${error.message}. Попробуйте еще раз.`);
         return;
       }
       } else {
@@ -392,48 +412,61 @@ export default function RequestPage() {
   // Telegram WebApp file upload
   const handleTelegramPhotoUpload = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-      // Показываем нативный интерфейс загрузки файлов
-      // Примечание: requestWriteAccess не поддерживается в версии 6.0
-      window.Telegram.WebApp.showPopup({
-        title: 'Выберите фото',
-        message: 'Выберите фотографии для заявки',
-        buttons: [
-          {
-            id: 'camera',
-            type: 'default',
-            text: 'Камера'
-          },
-          {
-            id: 'gallery',
-            type: 'default', 
-            text: 'Галерея'
-          },
-          {
-            id: 'cancel',
-            type: 'cancel',
-            text: 'Отмена'
-          }
-        ]
-      }, (buttonId) => {
-        if (buttonId === 'camera' || buttonId === 'gallery') {
-          // Открываем нативный интерфейс выбора файлов
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.multiple = true;
-          input.accept = 'image/*';
-          input.onchange = (e) => {
-            const files = (e.target as HTMLInputElement).files;
-            if (files) {
-              const newPhotos = Array.from(files).map(file => URL.createObjectURL(file));
-              setFormData(prev => ({
-                ...prev,
-                photos: [...prev.photos, ...newPhotos]
-              }));
+      // Проверяем, поддерживается ли showPopup в текущей версии
+      if (typeof window.Telegram.WebApp.showPopup === 'function') {
+        try {
+          window.Telegram.WebApp.showPopup({
+            title: 'Выберите фото',
+            message: 'Выберите фотографии для заявки',
+            buttons: [
+              {
+                id: 'camera',
+                type: 'default',
+                text: 'Камера'
+              },
+              {
+                id: 'gallery',
+                type: 'default', 
+                text: 'Галерея'
+              },
+              {
+                id: 'cancel',
+                type: 'cancel',
+                text: 'Отмена'
+              }
+            ]
+          }, (buttonId) => {
+            if (buttonId === 'camera' || buttonId === 'gallery') {
+              // Открываем нативный интерфейс выбора файлов
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.multiple = true;
+              input.accept = 'image/*';
+              input.onchange = (e) => {
+                const files = (e.target as HTMLInputElement).files;
+                if (files) {
+                  const newPhotos = Array.from(files).map(file => URL.createObjectURL(file));
+                  setFormData(prev => ({
+                    ...prev,
+                    photos: [...prev.photos, ...newPhotos]
+                  }));
+                }
+              };
+              input.click();
             }
-          };
-          input.click();
+          });
+        } catch (error) {
+          console.warn('⚠️ showPopup не поддерживается, используем fallback:', error);
+          // Fallback: открываем стандартный input
+          const input = document.getElementById('photo-upload') as HTMLInputElement;
+          input?.click();
         }
-      });
+      } else {
+        console.log('📱 showPopup не поддерживается в версии', window.Telegram.WebApp.version);
+        // Fallback: открываем стандартный input
+        const input = document.getElementById('photo-upload') as HTMLInputElement;
+        input?.click();
+      }
     } else {
       // Fallback для обычного браузера
       const input = document.getElementById('photo-upload') as HTMLInputElement;
@@ -494,6 +527,11 @@ export default function RequestPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+          {telegramFiles.length === 0 && (
+            <div className="text-xs text-gray-600 mt-1">
+              📸 Фото не загружены
             </div>
           )}
         </div>
@@ -604,6 +642,11 @@ export default function RequestPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+        {telegramFiles.length === 0 && (
+          <div className="text-xs text-gray-600 mt-1">
+            📸 Фото не загружены
           </div>
         )}
       </div>

@@ -4,17 +4,28 @@ export async function POST(request: Request) {
   try {
     const { file, fileName, orderNumber, objectName } = await request.json();
     
+    console.log('📸 Получен запрос на загрузку фото:', { fileName, orderNumber, objectName });
+    
     if (!file) {
+      console.error('❌ Файл не предоставлен');
       return NextResponse.json({ success: false, error: 'Файл не предоставлен' }, { status: 400 });
     }
 
     // Извлекаем base64 данные (убираем data:image/jpeg;base64,)
     const base64Data = file.split(',')[1];
     const buffer = Buffer.from(base64Data, 'base64');
+    
+    console.log('📸 Файл конвертирован в buffer, размер:', buffer.length);
 
     // Telegram Bot API endpoint для отправки фото
     const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
     const telegramChatId = process.env.TELEGRAM_CHAT_ID || process.env.TELEGRAM_ADMIN_CHAT_ID;
+    
+    console.log('🔧 Переменные окружения:', { 
+      hasToken: !!telegramBotToken, 
+      hasChatId: !!telegramChatId,
+      chatId: telegramChatId 
+    });
     
     if (!telegramBotToken || !telegramChatId) {
       console.error('❌ Отсутствуют переменные окружения для Telegram Bot API');
@@ -31,12 +42,15 @@ export async function POST(request: Request) {
     formData.append('caption', `📋 Заявка: ${orderNumber}\n🏢 Объект: ${objectName}\n📁 Файл: ${fileName}`);
 
     // Отправляем в Telegram Bot API
+    console.log('📤 Отправляем файл в Telegram Bot API...');
     const telegramResponse = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
       method: 'POST',
       body: formData,
     });
 
+    console.log('📦 Статус ответа от Telegram:', telegramResponse.status);
     const telegramResult = await telegramResponse.json();
+    console.log('📦 Ответ от Telegram:', telegramResult);
 
     if (!telegramResult.ok) {
       console.error('❌ Ошибка Telegram Bot API:', telegramResult);
