@@ -616,11 +616,11 @@ export default function RequestPage() {
       <div className="min-h-screen bg-background">
         {/* Header */}
         <div className="bg-background border-b border-border px-4 py-8 pt-safe">
-          <div className="flex items-center">
-            <Button variant="ghost" size="sm" className="mr-3" onClick={() => setShowConfirmation(false)}>
+          <div className="flex items-center justify-center relative">
+            <Button variant="ghost" size="sm" className="absolute left-0" onClick={() => setShowConfirmation(false)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
+            <div className="text-center">
               <h1 className="text-xl font-bold text-foreground">Подтверждение заявки</h1>
               <p className="text-xs text-muted-foreground leading-tight">
                 Проверьте данные<br />перед отправкой
@@ -748,13 +748,13 @@ export default function RequestPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-background border-b border-border px-4 py-8 pt-safe">
-        <div className="flex items-center">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="mr-3">
+        <div className="flex items-center justify-center relative">
+          <Link href="/" className="absolute left-0">
+            <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
+          <div className="text-center">
             <h1 className="text-xl font-bold text-foreground">Новая заявка</h1>
             <p className="text-xs text-muted-foreground leading-tight">
               Шаг {currentStep}/6
@@ -781,14 +781,14 @@ export default function RequestPage() {
             <span className="text-xs text-muted-foreground">из 6</span>
           </div>
           <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
-          <p className="text-xs text-muted-foreground mt-1 leading-tight">
-            {currentStep === 6 
-              ? "Нажмите \"Завершить\",<br />чтобы пропустить"
-              : currentStep === 5
-              ? "Укажите необходимые<br />материалы списком"
-              : `Например, "${currentStepData.placeholder}"`
-            }
-          </p>
+          {currentStep !== 6 && (
+            <p className="text-xs text-muted-foreground mt-1 leading-tight">
+              {currentStep === 5
+                ? "Укажите необходимые<br />материалы списком"
+                : `Например, "${currentStepData.placeholder}"`
+              }
+            </p>
+          )}
         </div>
         <div>
           {currentStep === 4 ? (
@@ -825,7 +825,7 @@ export default function RequestPage() {
                 </Popover>
               </div>
               <div className="flex-1">
-                <Label className="text-sm font-medium mb-2 block">Время (необязательно)</Label>
+                <Label className="text-sm font-medium mb-2 block text-muted-foreground">Время (необязательно)</Label>
                 <div className="relative">
                   <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input 
@@ -834,7 +834,7 @@ export default function RequestPage() {
                     value={formData.deliveryTime}
                     onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
                     onKeyPress={handleKeyPress}
-                    className="pl-10 h-12"
+                    className="pl-10 h-12 bg-muted/50 border-muted text-muted-foreground"
                   />
                 </div>
               </div>
@@ -851,17 +851,18 @@ export default function RequestPage() {
               />
             </div>
             ) : currentStep === 6 ? (
-              <div className="min-h-[150px]">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                  {formData.photos.length === 0 ? (
-                    // Показываем приветствие только если нет фото
-                    <div className="text-center">
-                      <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                      <p className="text-gray-600 mb-4">Добавьте фотографии</p>
-                    </div>
-                  ) : (
-                    // Показываем фото в сетке
-                    <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="min-h-[150px] flex flex-col">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex-1 flex flex-col">
+                  <div className="flex-1 flex flex-col justify-center">
+                    {formData.photos.length === 0 ? (
+                      // Показываем приветствие только если нет фото
+                      <div className="text-center">
+                        <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                        <p className="text-gray-600 mb-4">Добавьте фотографии</p>
+                      </div>
+                    ) : (
+                      // Показываем фото в сетке
+                      <div className="grid grid-cols-3 gap-3 mb-4">
                       {formData.photos.map((photo, index) => {
                         const progress = uploadProgress[index];
                         return (
@@ -912,10 +913,11 @@ export default function RequestPage() {
                         );
                       })}
                     </div>
-                  )}
+                    )}
+                  </div>
                   
-                  {/* Кнопка загрузки всегда видна */}
-                  <div className="text-center">
+                  {/* Кнопка загрузки всегда внизу */}
+                  <div className="text-center mt-auto">
                     <input
                       type="file"
                       multiple
