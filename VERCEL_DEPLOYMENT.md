@@ -10,6 +10,8 @@ TELEGRAM_BOT_TOKEN=7740316054:AAF9iYAOn8KJRpHGpapnop6PH47laytn92A
 TELEGRAM_CHAT_ID=237551991
 ```
 
+**Важно:** Эти переменные обязательны для работы загрузки фото в Telegram!
+
 ### 2. Настройки Vercel
 - **Framework Preset:** Next.js
 - **Build Command:** `npm run build`

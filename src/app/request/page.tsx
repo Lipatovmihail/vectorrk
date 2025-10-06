@@ -285,7 +285,7 @@ export default function RequestPage() {
           try {
             const responseData = JSON.parse(responseText);
             console.log('📦 JSON ответ от n8n:', responseData);
-          } catch (parseError) {
+          } catch {
             console.warn('⚠️ Ответ от n8n не является валидным JSON:', responseText);
           }
         } else {
@@ -297,7 +297,8 @@ export default function RequestPage() {
         return;
       } catch (error) {
         console.error('❌ Ошибка отправки в n8n:', error);
-        alert(`Ошибка при отправке заявки: ${error.message}. Попробуйте еще раз.`);
+        const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
+        alert(`Ошибка при отправке заявки: ${errorMessage}. Попробуйте еще раз.`);
         return;
       }
       } else {
