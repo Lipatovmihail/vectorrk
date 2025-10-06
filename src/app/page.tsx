@@ -38,7 +38,7 @@ export default function Home() {
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-1">
         <div className="text-center pt-safe pt-12">
           <div className="flex items-center justify-center">
-            <div className="w-30 h-20 flex items-end justify-center">
+            <div className="w-40 h-10 flex items-end justify-center">
         <Image
                 src="/logo.png" 
                 alt="Вектор РК" 
