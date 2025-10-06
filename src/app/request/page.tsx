@@ -27,6 +27,15 @@ export default function RequestPage() {
   })
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [telegramDebug, setTelegramDebug] = useState<string>('')
+  
+  // Состояние для хранения file_id от Telegram
+  const [telegramFileIds, setTelegramFileIds] = useState<Array<{
+    index: number;
+    fileId: string;
+    fileUrl: string;
+    messageId: number;
+    caption: string;
+  }>>([])
 
   // Инициализация Telegram WebApp (как в sellerkit)
   useEffect(() => {
@@ -238,62 +247,16 @@ export default function RequestPage() {
         // Используем Telegram WebApp для отправки файлов
         console.log('📱 Используем Telegram WebApp для отправки файлов...');
         
-      // Сначала загружаем фото в Telegram (если есть)
-      let telegramFiles = [];
-      if (formData.photos.length > 0) {
-        console.log('📸 Загружаем фото в Telegram...');
-        try {
-          // Конвертируем blob URLs в base64
-          const photosBase64 = await Promise.all(
-            formData.photos.map(async (photoUrl) => {
-              try {
-                const response = await fetch(photoUrl);
-                const blob = await response.blob();
-                return new Promise((resolve) => {
-                  const reader = new FileReader();
-                  reader.onloadend = () => resolve(reader.result as string);
-                  reader.readAsDataURL(blob);
-                });
-              } catch (error) {
-                console.error('Ошибка конвертации фото:', error);
-                return null;
-              }
-            })
-          ).then(results => results.filter(photo => photo !== null));
-
-          // Отправляем в Telegram
-          const telegramResponse = await fetch('/api/upload-to-telegram', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              photos: photosBase64,
-              orderNumber: formData.orderNumber,
-              objectName: formData.objectName
-            })
-          });
-
-          const telegramData = await telegramResponse.json();
-          if (telegramData.success) {
-            telegramFiles = telegramData.files;
-            console.log('✅ Фото загружены в Telegram:', telegramFiles);
-          } else {
-            console.error('❌ Ошибка загрузки в Telegram:', telegramData.error);
-          }
-        } catch (telegramError) {
-          console.error('❌ Ошибка загрузки в Telegram:', telegramError);
-        }
-      }
-
-      // Обновляем requestData с ссылками на файлы в Telegram
+      // Используем уже загруженные file_id (фото загружаются сразу при выборе)
       const updatedRequestData = {
         ...requestData,
         request: {
           ...requestData.request,
-          photos: telegramFiles // Заменяем blob URLs на ссылки Telegram
+          photos: telegramFileIds // Используем уже загруженные file_id
         }
       };
+      
+      console.log('📤 Используем уже загруженные file_id:', telegramFileIds);
 
       // Отправляем данные в n8n webhook (как в sellerkit)
       try {
@@ -345,11 +308,51 @@ export default function RequestPage() {
     }
   }
 
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (files) {
+      // Создаем blob URLs для превью
       const newPhotos = Array.from(files).map(file => URL.createObjectURL(file))
       setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newPhotos] }))
+      
+      // Сразу загружаем в Telegram
+      console.log('📸 Начинаем загрузку фото в Telegram...')
+      
+      try {
+        // Конвертируем файлы в base64
+        const photosBase64 = await Promise.all(
+          Array.from(files).map(async (file) => {
+            return new Promise<string>((resolve) => {
+              const reader = new FileReader()
+              reader.onloadend = () => resolve(reader.result as string)
+              reader.readAsDataURL(file)
+            })
+          })
+        )
+        
+        // Отправляем в Telegram
+        const telegramResponse = await fetch('/api/upload-to-telegram', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            photos: photosBase64,
+            orderNumber: formData.orderNumber || 'Без номера',
+            objectName: formData.objectName || 'Без объекта'
+          })
+        })
+        
+        const telegramData = await telegramResponse.json()
+        if (telegramData.success) {
+          setTelegramFileIds(prev => [...prev, ...telegramData.files])
+          console.log('✅ Фото загружены в Telegram:', telegramData.files)
+        } else {
+          console.error('❌ Ошибка загрузки в Telegram:', telegramData.error)
+        }
+      } catch (error) {
+        console.error('❌ Ошибка при загрузке фото:', error)
+      }
     }
   }
 
@@ -408,10 +411,13 @@ export default function RequestPage() {
   };
 
   const removePhoto = (index: number) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      photos: prev.photos.filter((_, i) => i !== index) 
+    setFormData(prev => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index)
     }))
+    
+    // Также удаляем соответствующий file_id
+    setTelegramFileIds(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -441,6 +447,16 @@ export default function RequestPage() {
           <div className="text-xs text-yellow-800">
             🔍 Отладка: {telegramDebug}
           </div>
+          {telegramFileIds.length > 0 && (
+            <div className="text-xs text-green-800 mt-1">
+              📸 Загружено фото в Telegram: {telegramFileIds.length} шт.
+              {telegramFileIds.map((file, index) => (
+                <div key={index} className="ml-2">
+                  • Фото {file.index}: {file.fileId.substring(0, 20)}...
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="px-4 py-4 space-y-4">
@@ -533,6 +549,16 @@ export default function RequestPage() {
         <div className="text-xs text-yellow-800">
           🔍 Отладка: {telegramDebug}
         </div>
+        {telegramFileIds.length > 0 && (
+          <div className="text-xs text-green-800 mt-1">
+            📸 Загружено фото в Telegram: {telegramFileIds.length} шт.
+            {telegramFileIds.map((file, index) => (
+              <div key={index} className="ml-2">
+                • Фото {file.index}: {file.fileId.substring(0, 20)}...
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Progress Bar */}
