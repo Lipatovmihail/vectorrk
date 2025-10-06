@@ -121,6 +121,14 @@ export default function RequestPage() {
     fileId: string;
     fileName: string;
   }>>([])
+  
+  // Состояние для отслеживания прогресса загрузки каждого фото
+  const [uploadProgress, setUploadProgress] = useState<Array<{
+    fileName: string;
+    status: 'compressing' | 'uploading' | 'completed' | 'error';
+    progress?: number;
+    error?: string;
+  }>>([])
 
   // Инициализация Telegram WebApp (как в sellerkit)
   useEffect(() => {
@@ -424,9 +432,23 @@ export default function RequestPage() {
     const previews = Array.from(files).map(f => URL.createObjectURL(f));
     setFormData(prev => ({ ...prev, photos: [...prev.photos, ...previews] }));
 
-    for (const file of Array.from(files)) {
+    // Инициализируем прогресс для всех файлов
+    const fileArray = Array.from(files);
+    setUploadProgress(fileArray.map(file => ({
+      fileName: file.name,
+      status: 'compressing' as const
+    })));
+
+    for (let i = 0; i < fileArray.length; i++) {
+      const file = fileArray[i];
+      
       try {
         console.log(`📸 Обрабатываем файл: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} МБ)`);
+        
+        // Обновляем статус: сжатие
+        setUploadProgress(prev => prev.map((item, idx) => 
+          idx === i ? { ...item, status: 'compressing' } : item
+        ));
         
         // 1) сжимаем "под капотом"
         const compressed = await compressImage(file, {
@@ -436,6 +458,11 @@ export default function RequestPage() {
         });
 
         console.log(`📦 Сжато до: ${(compressed.size / 1024 / 1024).toFixed(1)} МБ`);
+
+        // Обновляем статус: загрузка
+        setUploadProgress(prev => prev.map((item, idx) => 
+          idx === i ? { ...item, status: 'uploading' } : item
+        ));
 
         // 2) конвертим в base64
         const base64 = await blobToBase64(compressed);
@@ -453,8 +480,13 @@ export default function RequestPage() {
         });
 
         if (!resp.ok) {
-          console.error('TG upload failed:', await resp.text());
-          alert('Ошибка при загрузке фото в Telegram');
+          const errorText = await resp.text();
+          console.error('TG upload failed:', errorText);
+          
+          // Обновляем статус: ошибка
+          setUploadProgress(prev => prev.map((item, idx) => 
+            idx === i ? { ...item, status: 'error', error: 'Ошибка загрузки в Telegram' } : item
+          ));
           continue;
         }
         
@@ -465,14 +497,32 @@ export default function RequestPage() {
             fileId: data.file_id,
             fileName: file.name
           }]);
+          
+          // Обновляем статус: завершено
+          setUploadProgress(prev => prev.map((item, idx) => 
+            idx === i ? { ...item, status: 'completed' } : item
+          ));
+          
           console.log('✅ Фото загружено в Telegram Bot API:', data.file_id);
         } else {
           console.error('TG API error:', data.error);
-          alert(`Ошибка загрузки фото: ${data.error}`);
+          
+          // Обновляем статус: ошибка
+          setUploadProgress(prev => prev.map((item, idx) => 
+            idx === i ? { ...item, status: 'error', error: data.error || 'Неизвестная ошибка' } : item
+          ));
         }
       } catch (error) {
         console.error('❌ Ошибка при обработке файла:', error);
-        alert(`Ошибка при обработке файла ${file.name}`);
+        
+        // Обновляем статус: ошибка
+        setUploadProgress(prev => prev.map((item, idx) => 
+          idx === i ? { 
+            ...item, 
+            status: 'error', 
+            error: error instanceof Error ? error.message : 'Неизвестная ошибка' 
+          } : item
+        ));
       }
     }
   };
@@ -523,6 +573,9 @@ export default function RequestPage() {
     
     // Также удаляем соответствующий file_id
     setTelegramFiles(prev => prev.filter((_, i) => i !== index))
+    
+    // Удаляем соответствующий прогресс
+    setUploadProgress(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -552,6 +605,22 @@ export default function RequestPage() {
           <div className="text-xs text-yellow-800">
             🔍 Отладка: {telegramDebug}
           </div>
+          {uploadProgress.length > 0 && (
+            <div className="text-xs text-blue-800 mt-1">
+              📊 Статус загрузки фото:
+              {uploadProgress.map((item, index) => (
+                <div key={index} className="ml-2">
+                  • {item.fileName}: {
+                    item.status === 'compressing' ? '🔄 Сжатие...' :
+                    item.status === 'uploading' ? '📤 Загрузка...' :
+                    item.status === 'completed' ? '✅ Готово' :
+                    item.status === 'error' ? `❌ Ошибка: ${item.error}` : '⏳ Ожидание'
+                  }
+                </div>
+              ))}
+            </div>
+          )}
+          
           {telegramFiles.length > 0 && (
             <div className="text-xs text-green-800 mt-1">
               📸 Загружено фото в Telegram Bot API: {telegramFiles.length} шт.
@@ -573,7 +642,7 @@ export default function RequestPage() {
               </div>
             </div>
           )}
-          {telegramFiles.length === 0 && (
+          {telegramFiles.length === 0 && uploadProgress.length === 0 && (
             <div className="text-xs text-gray-600 mt-1">
               📸 Фото не загружены
             </div>
@@ -615,17 +684,53 @@ export default function RequestPage() {
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Фотографии</Label>
                   <div className="flex gap-2 mt-2">
-                    {formData.photos.map((photo, index) => (
-                      <div key={index} className="relative">
-                        <Image
-                          src={photo}
-                          alt={`Фото ${index + 1}`}
-                          width={80}
-                          height={80}
-                          className="rounded-lg object-cover"
-                        />
-                      </div>
-                    ))}
+                    {formData.photos.map((photo, index) => {
+                      const progress = uploadProgress[index];
+                      return (
+                        <div key={index} className="relative">
+                          <Image
+                            src={photo}
+                            alt={`Фото ${index + 1}`}
+                            width={80}
+                            height={80}
+                            className="rounded-lg object-cover"
+                          />
+                          
+                          {/* Индикатор прогресса */}
+                          {progress && progress.status !== 'completed' && (
+                            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                              <div className="text-white text-xs text-center">
+                                {progress.status === 'compressing' && (
+                                  <div>
+                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
+                                    <div>Сжатие...</div>
+                                  </div>
+                                )}
+                                {progress.status === 'uploading' && (
+                                  <div>
+                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
+                                    <div>Загрузка...</div>
+                                  </div>
+                                )}
+                                {progress.status === 'error' && (
+                                  <div className="text-red-300">
+                                    <div>❌</div>
+                                    <div className="text-xs">Ошибка</div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Иконка успеха */}
+                          {progress && progress.status === 'completed' && (
+                            <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                              <Check className="w-3 h-3" />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -670,6 +775,22 @@ export default function RequestPage() {
         <div className="text-xs text-yellow-800">
           🔍 Отладка: {telegramDebug}
         </div>
+        {uploadProgress.length > 0 && (
+          <div className="text-xs text-blue-800 mt-1">
+            📊 Статус загрузки фото:
+            {uploadProgress.map((item, index) => (
+              <div key={index} className="ml-2">
+                • {item.fileName}: {
+                  item.status === 'compressing' ? '🔄 Сжатие...' :
+                  item.status === 'uploading' ? '📤 Загрузка...' :
+                  item.status === 'completed' ? '✅ Готово' :
+                  item.status === 'error' ? `❌ Ошибка: ${item.error}` : '⏳ Ожидание'
+                }
+              </div>
+            ))}
+          </div>
+        )}
+        
         {telegramFiles.length > 0 && (
           <div className="text-xs text-green-800 mt-1">
             📸 Загружено фото в Telegram Bot API: {telegramFiles.length} шт.
@@ -691,7 +812,7 @@ export default function RequestPage() {
             </div>
           </div>
         )}
-        {telegramFiles.length === 0 && (
+        {telegramFiles.length === 0 && uploadProgress.length === 0 && (
           <div className="text-xs text-gray-600 mt-1">
             📸 Фото не загружены
           </div>
@@ -801,25 +922,62 @@ export default function RequestPage() {
                 
                 {formData.photos.length > 0 && (
                   <div className="grid grid-cols-3 gap-2">
-                    {formData.photos.map((photo, index) => (
-                      <div key={index} className="relative">
-                        <Image
-                          src={photo}
-                          alt={`Фото ${index + 1}`}
-                          width={100}
-                          height={100}
-                          className="rounded-lg object-cover"
-                        />
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
-                          onClick={() => removePhoto(index)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                    </div>
-                    ))}
+                    {formData.photos.map((photo, index) => {
+                      const progress = uploadProgress[index];
+                      return (
+                        <div key={index} className="relative">
+                          <Image
+                            src={photo}
+                            alt={`Фото ${index + 1}`}
+                            width={100}
+                            height={100}
+                            className="rounded-lg object-cover"
+                          />
+                          
+                          {/* Индикатор прогресса */}
+                          {progress && progress.status !== 'completed' && (
+                            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                              <div className="text-white text-xs text-center">
+                                {progress.status === 'compressing' && (
+                                  <div>
+                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
+                                    <div>Сжатие...</div>
+                                  </div>
+                                )}
+                                {progress.status === 'uploading' && (
+                                  <div>
+                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
+                                    <div>Загрузка...</div>
+                                  </div>
+                                )}
+                                {progress.status === 'error' && (
+                                  <div className="text-red-300">
+                                    <div>❌</div>
+                                    <div className="text-xs">Ошибка</div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Иконка успеха */}
+                          {progress && progress.status === 'completed' && (
+                            <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                              <Check className="w-3 h-3" />
+                            </div>
+                          )}
+                          
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                            onClick={() => removePhoto(index)}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
