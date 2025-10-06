@@ -657,7 +657,7 @@ export default function RequestPage() {
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Материалы</Label>
-                <p className="text-base">{formData.materials || <span className="text-red-500">Не указано</span>}</p>
+                <p className="text-base whitespace-pre-line">{formData.materials || <span className="text-red-500">Не указано</span>}</p>
               </div>
               {formData.photos.length > 0 && (
                 <div>
