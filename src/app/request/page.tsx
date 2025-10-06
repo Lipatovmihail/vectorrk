@@ -621,7 +621,7 @@ export default function RequestPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="text-center">
-              <h1 className="text-xl font-bold text-foreground">Подтверждение заявки</h1>
+              <h1 className="text-xl font-bold text-foreground">Подтверждение</h1>
               <p className="text-xs text-muted-foreground leading-tight">
                 Проверьте данные<br />перед отправкой
               </p>
