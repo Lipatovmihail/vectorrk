@@ -113,7 +113,6 @@ export default function RequestPage() {
     photos: [] as string[]
   })
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [telegramDebug, setTelegramDebug] = useState<string>('')
   
   // Состояние для хранения file_id от Telegram
   const [telegramFiles, setTelegramFiles] = useState<Array<{
@@ -152,10 +151,7 @@ export default function RequestPage() {
         console.log('📱 Telegram User:', telegramUser);
         console.log('📱 Telegram ID:', telegramId);
         
-        // Устанавливаем отладочную информацию
-        const debugInfo = `Telegram ID: ${telegramId || 'не найден'} | initData: ${window.Telegram.WebApp.initData ? 'есть' : 'нет'}`;
-        setTelegramDebug(debugInfo);
-        console.log('📱 Telegram Debug:', debugInfo);
+        console.log('📱 Telegram Debug:', `Telegram ID: ${telegramId || 'не найден'} | initData: ${window.Telegram.WebApp.initData ? 'есть' : 'нет'}`);
         
         // Инициализация WebApp
         try {
@@ -213,7 +209,6 @@ export default function RequestPage() {
         } else {
           // Fallback для локального тестирования
           const mockTelegramId = 123456789; // Тестовый ID
-          setTelegramDebug(`Локальное тестирование | Mock ID: ${mockTelegramId}`);
           console.log('⚠️ Telegram WebApp не обнаружен, используем mock данные для тестирования');
           
           // Сохраняем mock ID в localStorage для тестирования
@@ -812,60 +807,6 @@ export default function RequestPage() {
         </div>
       </div>
 
-      {/* Отладочная информация для Telegram */}
-      <div className="bg-yellow-100 border border-yellow-300 rounded p-2 mx-4 mt-2">
-        <div className="text-xs text-yellow-800">
-          🔍 Отладка: {telegramDebug}
-        </div>
-        {isUploading && (
-          <div className="text-xs text-orange-800 mt-1">
-            ⚠️ Загрузка фото в процессе... Кнопки заблокированы
-          </div>
-        )}
-        
-        {uploadProgress.length > 0 && (
-          <div className="text-xs text-blue-800 mt-1">
-            📊 Статус загрузки фото:
-            {uploadProgress.map((item, index) => (
-              <div key={index} className="ml-2">
-                • {item.fileName}: {
-                  item.status === 'compressing' ? '🔄 Сжатие...' :
-                  item.status === 'uploading' ? '📤 Загрузка...' :
-                  item.status === 'completed' ? '✅ Загружено' :
-                  item.status === 'error' ? `❌ Ошибка: ${item.error}` : '⏳ Ожидание'
-                }
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {telegramFiles.length > 0 && (
-          <div className="text-xs text-green-800 mt-1">
-            📸 Загружено фото в Telegram Bot API: {telegramFiles.length} шт.
-            <div className="text-xs text-gray-600 ml-2">
-              💡 Фото автоматически сжаты до ~1.6 МБ
-            </div>
-            {telegramFiles.map((file, index) => (
-              <div key={index} className="ml-2">
-                • Фото {file.index}: {file.fileId.substring(0, 20)}...
-              </div>
-            ))}
-            <div className="text-xs text-blue-800 mt-1">
-              📤 Настоящие File IDs от Telegram (для отправки в n8n):
-              {telegramFiles.map((file, index) => (
-                <div key={index} className="ml-2 font-mono">
-                  • {file.fileId}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {telegramFiles.length === 0 && uploadProgress.length === 0 && (
-          <div className="text-xs text-gray-600 mt-1">
-            📸 Фото не загружены
-          </div>
-        )}
-      </div>
 
       {/* Progress Bar */}
       <div className="px-4 py-2">

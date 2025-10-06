@@ -7,7 +7,7 @@
 
 ```env
 TELEGRAM_BOT_TOKEN=7740316054:AAF9iYAOn8KJRpHGpapnop6PH47laytn92A
-TELEGRAM_CHAT_ID=237551991
+TELEGRAM_CHAT_ID=-1003083346855
 ```
 
 **Важно:** Эти переменные обязательны для работы загрузки фото в Telegram!

@@ -34,7 +34,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         {children}
-        <Toaster />
+        <Toaster position="top-center" />
       </body>
     </html>
   );
