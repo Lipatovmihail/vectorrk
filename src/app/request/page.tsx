@@ -636,28 +636,28 @@ export default function RequestPage() {
             <div className="space-y-3">
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Номер наряд-заказа</Label>
-                <p className="text-base">{formData.orderNumber || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
+                <p className="text-base">{formData.orderNumber || <span className="text-red-500">Не указано</span>}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Наименование объекта</Label>
-                <p className="text-base">{formData.objectName || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
+                <p className="text-base">{formData.objectName || <span className="text-red-500">Не указано</span>}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Адрес объекта</Label>
-                <p className="text-base">{formData.objectAddress || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
+                <p className="text-base">{formData.objectAddress || <span className="text-red-500">Не указано</span>}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Дата поставки</Label>
                 <p className="text-base">
                   {formData.deliveryDate 
                     ? `${format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })}${formData.deliveryTime ? ` ${formData.deliveryTime}` : ''}`
-                    : <span className="text-red-500">&quot;Не указано&quot;</span>
+                    : <span className="text-red-500">Не указано</span>
                   }
                 </p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Материалы</Label>
-                <p className="text-base">{formData.materials || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
+                <p className="text-base">{formData.materials || <span className="text-red-500">Не указано</span>}</p>
               </div>
               {formData.photos.length > 0 && (
                 <div>
@@ -781,14 +781,14 @@ export default function RequestPage() {
             <span className="text-xs text-muted-foreground">из 6</span>
           </div>
           <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
-          {currentStep !== 6 && (
-            <p className="text-xs text-muted-foreground mt-1 leading-tight">
-              {currentStep === 5
-                ? "Укажите необходимые<br />материалы списком"
-                : `Например, "${currentStepData.placeholder}"`
-              }
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground mt-1 leading-tight">
+            {currentStep === 6
+              ? "Добавьте фото при необходимости"
+              : currentStep === 5
+              ? "Укажите необходимые материалы списком"
+              : `Например, "${currentStepData.placeholder}"`
+            }
+          </p>
         </div>
         <div>
           {currentStep === 4 ? (
