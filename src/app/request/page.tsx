@@ -129,6 +129,9 @@ export default function RequestPage() {
     progress?: number;
     error?: string;
   }>>([])
+  
+  // Состояние для блокировки кнопок во время загрузки
+  const [isUploading, setIsUploading] = useState(false)
 
   // Инициализация Telegram WebApp (как в sellerkit)
   useEffect(() => {
@@ -428,26 +431,35 @@ export default function RequestPage() {
 
   // Общий обработчик файлов (и превью, и загрузка в Telegram → file_id)
   const processFilesAndUpload = async (files: FileList) => {
+    // Блокируем кнопки во время загрузки
+    setIsUploading(true);
+    
     // Показываем превью сразу (из исходников)
     const previews = Array.from(files).map(f => URL.createObjectURL(f));
     setFormData(prev => ({ ...prev, photos: [...prev.photos, ...previews] }));
 
     // Инициализируем прогресс для всех файлов
     const fileArray = Array.from(files);
-    setUploadProgress(fileArray.map(file => ({
-      fileName: file.name,
-      status: 'compressing' as const
-    })));
+    const currentPhotoCount = formData.photos.length;
+    
+    setUploadProgress(prev => [
+      ...prev,
+      ...fileArray.map(file => ({
+        fileName: file.name,
+        status: 'compressing' as const
+      }))
+    ]);
 
     for (let i = 0; i < fileArray.length; i++) {
       const file = fileArray[i];
+      const progressIndex = currentPhotoCount + i; // Правильный индекс в общем массиве
       
       try {
         console.log(`📸 Обрабатываем файл: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} МБ)`);
         
         // Обновляем статус: сжатие
         setUploadProgress(prev => prev.map((item, idx) => 
-          idx === i ? { ...item, status: 'compressing' } : item
+          idx === progressIndex ? { ...item, status: 'compressing' } : item
         ));
         
         // 1) сжимаем "под капотом"
@@ -461,7 +473,7 @@ export default function RequestPage() {
 
         // Обновляем статус: загрузка
         setUploadProgress(prev => prev.map((item, idx) => 
-          idx === i ? { ...item, status: 'uploading' } : item
+          idx === progressIndex ? { ...item, status: 'uploading' } : item
         ));
 
         // 2) конвертим в base64
@@ -485,7 +497,7 @@ export default function RequestPage() {
           
           // Обновляем статус: ошибка
           setUploadProgress(prev => prev.map((item, idx) => 
-            idx === i ? { ...item, status: 'error', error: 'Ошибка загрузки в Telegram' } : item
+            idx === progressIndex ? { ...item, status: 'error', error: 'Ошибка загрузки в Telegram' } : item
           ));
           continue;
         }
@@ -500,7 +512,7 @@ export default function RequestPage() {
           
           // Обновляем статус: завершено
           setUploadProgress(prev => prev.map((item, idx) => 
-            idx === i ? { ...item, status: 'completed' } : item
+            idx === progressIndex ? { ...item, status: 'completed' } : item
           ));
           
           console.log('✅ Фото загружено в Telegram Bot API:', data.file_id);
@@ -509,7 +521,7 @@ export default function RequestPage() {
           
           // Обновляем статус: ошибка
           setUploadProgress(prev => prev.map((item, idx) => 
-            idx === i ? { ...item, status: 'error', error: data.error || 'Неизвестная ошибка' } : item
+            idx === progressIndex ? { ...item, status: 'error', error: data.error || 'Неизвестная ошибка' } : item
           ));
         }
       } catch (error) {
@@ -517,7 +529,7 @@ export default function RequestPage() {
         
         // Обновляем статус: ошибка
         setUploadProgress(prev => prev.map((item, idx) => 
-          idx === i ? { 
+          idx === progressIndex ? { 
             ...item, 
             status: 'error', 
             error: error instanceof Error ? error.message : 'Неизвестная ошибка' 
@@ -525,6 +537,9 @@ export default function RequestPage() {
         ));
       }
     }
+    
+    // Разблокируем кнопки после завершения всех загрузок
+    setIsUploading(false);
   };
 
   // Скрытый инпут использует общий обработчик
@@ -688,13 +703,13 @@ export default function RequestPage() {
                       const progress = uploadProgress[index];
                       return (
                         <div key={index} className="relative">
-                          <Image
-                            src={photo}
-                            alt={`Фото ${index + 1}`}
-                            width={80}
-                            height={80}
-                            className="rounded-lg object-cover"
-                          />
+                        <Image
+                          src={photo}
+                          alt={`Фото ${index + 1}`}
+                          width={80}
+                          height={80}
+                          className="rounded-lg object-cover w-20 h-20"
+                        />
                           
                           {/* Индикатор прогресса */}
                           {progress && progress.status !== 'completed' && (
@@ -722,12 +737,6 @@ export default function RequestPage() {
                             </div>
                           )}
                           
-                          {/* Иконка успеха */}
-                          {progress && progress.status === 'completed' && (
-                            <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                              <Check className="w-3 h-3" />
-                            </div>
-                          )}
                         </div>
                       );
                     })}
@@ -738,12 +747,30 @@ export default function RequestPage() {
           </Card>
 
           <div className="flex gap-3 pb-6">
-            <Button variant="outline" className="flex-1 h-12" onClick={() => setShowConfirmation(false)}>
+            <Button 
+              variant="outline" 
+              className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={() => setShowConfirmation(false)}
+              disabled={isUploading}
+            >
               Редактировать
             </Button>
-            <Button className="flex-1 h-12" onClick={handleSubmitRequest}>
-              <Check className="h-4 w-4 mr-2" />
-              Отправить заявку
+            <Button 
+              className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={handleSubmitRequest}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                  Загрузка...
+                </div>
+              ) : (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Отправить заявку
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -775,6 +802,12 @@ export default function RequestPage() {
         <div className="text-xs text-yellow-800">
           🔍 Отладка: {telegramDebug}
         </div>
+        {isUploading && (
+          <div className="text-xs text-orange-800 mt-1">
+            ⚠️ Загрузка фото в процессе... Кнопки заблокированы
+          </div>
+        )}
+        
         {uploadProgress.length > 0 && (
           <div className="text-xs text-blue-800 mt-1">
             📊 Статус загрузки фото:
@@ -783,7 +816,7 @@ export default function RequestPage() {
                 • {item.fileName}: {
                   item.status === 'compressing' ? '🔄 Сжатие...' :
                   item.status === 'uploading' ? '📤 Загрузка...' :
-                  item.status === 'completed' ? '✅ Готово' :
+                  item.status === 'completed' ? '✅ Загружено' :
                   item.status === 'error' ? `❌ Ошибка: ${item.error}` : '⏳ Ожидание'
                 }
               </div>
@@ -915,9 +948,20 @@ export default function RequestPage() {
                     className="hidden"
                     id="photo-upload"
                   />
-                  <Button onClick={handleTelegramPhotoUpload}>
-                    Выбрать фото
-                    </Button>
+                  <Button 
+                    onClick={handleTelegramPhotoUpload}
+                    disabled={isUploading}
+                    className={isUploading ? "opacity-50 cursor-not-allowed" : ""}
+                  >
+                    {isUploading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                        Загрузка...
+                      </div>
+                    ) : (
+                      "Выбрать фото"
+                    )}
+                  </Button>
                 </div>
                 
                 {formData.photos.length > 0 && (
@@ -931,7 +975,7 @@ export default function RequestPage() {
                             alt={`Фото ${index + 1}`}
                             width={100}
                             height={100}
-                            className="rounded-lg object-cover"
+                            className="rounded-lg object-cover w-24 h-24"
                           />
                           
                           {/* Индикатор прогресса */}
@@ -960,12 +1004,6 @@ export default function RequestPage() {
                             </div>
                           )}
                           
-                          {/* Иконка успеха */}
-                          {progress && progress.status === 'completed' && (
-                            <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                              <Check className="w-3 h-3" />
-                            </div>
-                          )}
                           
                           <Button
                             size="sm"
@@ -998,12 +1036,28 @@ export default function RequestPage() {
         {/* Navigation */}
         <div className="flex gap-3 mt-6 pb-6">
           {currentStep > 1 && (
-            <Button variant="outline" className="flex-1 h-12" onClick={prevStep}>
+            <Button 
+              variant="outline" 
+              className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={prevStep}
+              disabled={isUploading}
+            >
               Назад
-          </Button>
+            </Button>
           )}
-          <Button className="flex-1 h-12" onClick={nextStep}>
-            {currentStep === 6 ? "Завершить" : "Далее"}
+          <Button 
+            className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={nextStep}
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                Загрузка...
+              </div>
+            ) : (
+              currentStep === 6 ? "Завершить" : "Далее"
+            )}
           </Button>
         </div>
       </div>
