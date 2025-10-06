@@ -349,10 +349,26 @@ export default function RequestPage() {
           console.log('📦 Пустой ответ от n8n (это нормально)');
         }
         
+        // Моментальный переход на главную
+        window.location.href = '/';
+        
+        // Показываем toast и отправляем запрос в фоне
         toast.success('Заявка успешно отправлена!');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
+        
+        // Запрос в фоне (не блокируем UI)
+        setTimeout(async () => {
+          try {
+            // Дублируем запрос в фоне для надежности
+            await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(updatedRequestData),
+            });
+          } catch {
+            console.log('Фоновый запрос не удался, но это не критично');
+          }
+        }, 100);
+        
         return;
       } catch (error) {
         console.error('❌ Ошибка отправки в n8n:', error);
