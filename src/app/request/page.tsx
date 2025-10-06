@@ -331,148 +331,97 @@ export default function RequestPage() {
     }
   }
 
-  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files) {
-      // Проверяем размер файлов (максимум 2MB на файл)
-      const maxSize = 2 * 1024 * 1024; // 2MB
-      const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
-      
-      if (oversizedFiles.length > 0) {
-        alert(`Некоторые файлы слишком большие (максимум 2MB). Пропущено файлов: ${oversizedFiles.length}`);
+  // Общий обработчик файлов (и превью, и загрузка в Telegram → file_id)
+  const processFilesAndUpload = async (files: FileList) => {
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    const valid = Array.from(files).filter(f => f.size <= maxSize);
+    
+    if (!valid.length) {
+      alert('Все файлы слишком большие (макс. 2MB)'); 
+      return;
+    }
+
+    // Превью
+    const previews = valid.map(f => URL.createObjectURL(f));
+    setFormData(prev => ({ ...prev, photos: [...prev.photos, ...previews] }));
+
+    // По одному, чтобы не ловить rate limit 429
+    for (const file of valid) {
+      const base64: string = await new Promise(res => {
+        const r = new FileReader();
+        r.onloadend = () => res(r.result as string);
+        r.readAsDataURL(file);
+      });
+
+      const uploadRes = await fetch('/api/telegram-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file: base64,
+          fileName: file.name,
+          orderNumber: formData.orderNumber || 'Без номера',
+          objectName: formData.objectName || 'Без объекта'
+        }),
+      });
+
+      if (!uploadRes.ok) {
+        const txt = await uploadRes.text();
+        console.error('TG upload failed:', txt);
+        alert('Ошибка при загрузке фото в Telegram');
+        continue;
       }
-      
-      // Фильтруем файлы по размеру
-      const validFiles = Array.from(files).filter(file => file.size <= maxSize);
-      
-      if (validFiles.length === 0) {
-        alert('Все файлы слишком большие. Максимальный размер: 2MB');
-        return;
-      }
-      
-      // Создаем blob URLs для превью
-      const newPhotos = validFiles.map(file => URL.createObjectURL(file))
-      setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newPhotos] }))
-      
-      // Загружаем файлы в Telegram Bot API и получаем настоящие file_id
-      console.log('📸 Начинаем загрузку фото в Telegram Bot API...')
-      
-      try {
-        // Отправляем файлы в Telegram Bot API
-        for (let i = 0; i < validFiles.length; i++) {
-          const file = validFiles[i];
-          
-          // Конвертируем файл в base64
-          const base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader()
-            reader.onloadend = () => resolve(reader.result as string)
-            reader.readAsDataURL(file)
-          })
-          
-          // Отправляем в наш API роут, который загрузит в Telegram Bot API
-          const uploadResponse = await fetch('/api/telegram-upload', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              file: base64,
-              fileName: file.name,
-              orderNumber: formData.orderNumber || 'Без номера',
-              objectName: formData.objectName || 'Без объекта'
-            }),
-          });
-          
-          if (uploadResponse.ok) {
-            const result = await uploadResponse.json();
-            if (result.success && result.file_id) {
-              // Сохраняем НАСТОЯЩИЙ file_id от Telegram
-              setTelegramFiles(prev => [...prev, {
-                index: prev.length,
-                fileId: result.file_id, // Настоящий file_id от Telegram
-                fileName: file.name
-              }]);
-              console.log('✅ Фото загружено в Telegram Bot API:', result.file_id);
-            } else {
-              console.error('❌ Ошибка загрузки:', result.error);
-              alert(`Ошибка загрузки фото: ${result.error}`);
-            }
-          } else {
-            const errorText = await uploadResponse.text();
-            console.error('❌ HTTP ошибка загрузки:', errorText);
-            alert('Ошибка при загрузке фото в Telegram');
-          }
-        }
-      } catch (error) {
-        console.error('❌ Ошибка при загрузке фото в Telegram Bot API:', error)
-        alert('Ошибка при загрузке фото. Попробуйте еще раз.');
+
+      const data = await uploadRes.json();
+      if (data.success && data.file_id) {
+        setTelegramFiles(prev => [...prev, {
+          index: prev.length,
+          fileId: data.file_id,
+          fileName: file.name,
+        }]);
+        console.log('✅ Фото загружено в Telegram Bot API:', data.file_id);
+      } else {
+        console.error('TG API error:', data.error);
+        alert(`Ошибка загрузки фото: ${data.error}`);
       }
     }
+  };
+
+  // Скрытый инпут использует общий обработчик
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) await processFilesAndUpload(event.target.files);
   }
 
   // Telegram WebApp file upload
   const handleTelegramPhotoUpload = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-      // Проверяем, поддерживается ли showPopup в текущей версии
       if (typeof window.Telegram.WebApp.showPopup === 'function') {
-        try {
-          window.Telegram.WebApp.showPopup({
-            title: 'Выберите фото',
-            message: 'Выберите фотографии для заявки',
-            buttons: [
-              {
-                id: 'camera',
-                type: 'default',
-                text: 'Камера'
-              },
-              {
-                id: 'gallery',
-                type: 'default', 
-                text: 'Галерея'
-              },
-              {
-                id: 'cancel',
-                type: 'cancel',
-                text: 'Отмена'
-              }
-            ]
-          }, (buttonId) => {
-            if (buttonId === 'camera' || buttonId === 'gallery') {
-              // Открываем нативный интерфейс выбора файлов
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.multiple = true;
-              input.accept = 'image/*';
-              input.onchange = (e) => {
-                const files = (e.target as HTMLInputElement).files;
-                if (files) {
-                  const newPhotos = Array.from(files).map(file => URL.createObjectURL(file));
-                  setFormData(prev => ({
-                    ...prev,
-                    photos: [...prev.photos, ...newPhotos]
-                  }));
-                }
-              };
-              input.click();
-            }
-          });
-        } catch (error) {
-          console.warn('⚠️ showPopup не поддерживается, используем fallback:', error);
-          // Fallback: открываем стандартный input
-          const input = document.getElementById('photo-upload') as HTMLInputElement;
-          input?.click();
-        }
-      } else {
-        console.log('📱 showPopup не поддерживается в версии', window.Telegram.WebApp.version);
-        // Fallback: открываем стандартный input
-        const input = document.getElementById('photo-upload') as HTMLInputElement;
-        input?.click();
+        window.Telegram.WebApp.showPopup({
+          title: 'Выберите фото',
+          message: 'Выберите фотографии для заявки',
+          buttons: [
+            { id: 'camera', type: 'default', text: 'Камера' },
+            { id: 'gallery', type: 'default', text: 'Галерея' },
+            { id: 'cancel', type: 'cancel', text: 'Отмена' }
+          ]
+        }, (buttonId) => {
+          if (buttonId === 'camera' || buttonId === 'gallery') {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+              const files = (e.target as HTMLInputElement).files;
+              if (files) processFilesAndUpload(files); // ← КЛЮЧЕВОЕ
+            };
+            input.click();
+          }
+        });
+        return;
       }
-    } else {
-      // Fallback для обычного браузера
-      const input = document.getElementById('photo-upload') as HTMLInputElement;
-      input?.click();
     }
+    // Fallback: обычный инпут
+    const input = document.getElementById('photo-upload') as HTMLInputElement;
+    input?.click();
   };
 
   const removePhoto = (index: number) => {
