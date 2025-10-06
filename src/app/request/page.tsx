@@ -958,10 +958,19 @@ export default function RequestPage() {
 
         {/* Navigation */}
         <div className="flex gap-3 mt-6 pb-6">
-          {currentStep > 1 && (
+          {currentStep === 1 ? (
             <Button 
               variant="outline" 
-              className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={() => window.location.href = '/'}
+              disabled={isUploading}
+            >
+              Отменить
+            </Button>
+          ) : currentStep > 1 && (
+            <Button 
+              variant="outline" 
+              className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={prevStep}
               disabled={isUploading}
             >
@@ -969,7 +978,7 @@ export default function RequestPage() {
             </Button>
           )}
           <Button 
-            className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={nextStep}
             disabled={isUploading}
           >
