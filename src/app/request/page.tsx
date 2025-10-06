@@ -636,28 +636,28 @@ export default function RequestPage() {
             <div className="space-y-3">
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Номер наряд-заказа</Label>
-                <p className="text-base">{formData.orderNumber || "Не указано"}</p>
+                <p className="text-base">{formData.orderNumber || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Наименование объекта</Label>
-                <p className="text-base">{formData.objectName || "Не указано"}</p>
+                <p className="text-base">{formData.objectName || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Адрес объекта</Label>
-                <p className="text-base">{formData.objectAddress || "Не указано"}</p>
+                <p className="text-base">{formData.objectAddress || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Дата поставки</Label>
                 <p className="text-base">
                   {formData.deliveryDate 
                     ? `${format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })}${formData.deliveryTime ? ` ${formData.deliveryTime}` : ''}`
-                    : "Не указано"
+                    : <span className="text-red-500">&quot;Не указано&quot;</span>
                   }
                 </p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Материалы</Label>
-                <p className="text-base">{formData.materials || "Не указано"}</p>
+                <p className="text-base">{formData.materials || <span className="text-red-500">&quot;Не указано&quot;</span>}</p>
               </div>
               {formData.photos.length > 0 && (
                 <div>
