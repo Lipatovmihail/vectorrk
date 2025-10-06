@@ -131,6 +131,9 @@ export default function RequestPage() {
   
   // Состояние для блокировки кнопок во время загрузки
   const [isUploading, setIsUploading] = useState(false)
+  
+  // Состояние для блокировки кнопки отправки заявки
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Инициализация Telegram WebApp (как в sellerkit)
   useEffect(() => {
@@ -243,6 +246,9 @@ export default function RequestPage() {
   // Функция для конвертации blob URL в base64
 
   const handleSubmitRequest = async () => {
+    if (isSubmitting) return; // Предотвращаем множественные клики
+    
+    setIsSubmitting(true);
     try {
       const { telegram_id, initData } = getTelegramData();
       
@@ -371,12 +377,14 @@ export default function RequestPage() {
         console.error('❌ Ошибка отправки в n8n:', error);
         const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
         toast.error(`Ошибка при отправке заявки: ${errorMessage}. Попробуйте еще раз.`);
+        setIsSubmitting(false);
         return;
       }
       } else {
         // Fallback: для обычного браузера показываем сообщение
         console.log('⚠️ Telegram WebApp не обнаружен, показываем сообщение');
         toast.warning('Это приложение предназначено для использования в Telegram. Пожалуйста, откройте его через Telegram бота.');
+        setIsSubmitting(false);
         return;
       }
     } catch (error) {
@@ -386,6 +394,7 @@ export default function RequestPage() {
       console.error('❌ Стек ошибки:', error instanceof Error ? error.stack : 'No stack trace');
       
       toast.error(`Ошибка при отправке заявки: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setIsSubmitting(false);
     }
   }
 
@@ -697,11 +706,16 @@ export default function RequestPage() {
               Править
             </Button>
             <Button 
-              className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`flex-1 h-12 text-sm ${(isUploading || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={handleSubmitRequest}
-              disabled={isUploading}
+              disabled={isUploading || isSubmitting}
             >
-              {isUploading ? (
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                  Отправка...
+                </div>
+              ) : isUploading ? (
                 <div className="flex items-center gap-2">
                   <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
                   Загрузка...

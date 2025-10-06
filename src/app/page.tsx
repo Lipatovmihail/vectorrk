@@ -16,7 +16,10 @@ export default function Home() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
-      toast.success('Заявка успешно отправлена!');
+      // Небольшая задержка для корректного отображения toast
+      setTimeout(() => {
+        toast.success('Заявка успешно отправлена!');
+      }, 100);
       // Очищаем URL от параметра
       window.history.replaceState({}, '', '/');
     }
