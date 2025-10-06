@@ -103,3 +103,73 @@
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
  ✓ Compiled in 134ms
+ ✓ Compiled in 144ms
+ ✓ Compiled / in 41ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1323ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.sdmjgpjgmto'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.sdmjgpjgmto'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.dnvjotun4cf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.dnvjotun4cf'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.9slhp6zp94w'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.9slhp6zp94w'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.ntfbdfmj6cd'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.ntfbdfmj6cd'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.x8r6vwe2dyc'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.x8r6vwe2dyc'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.whwlack5to'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.whwlack5to'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
+}
