@@ -217,7 +217,7 @@ export default function Home() {
             <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
               <div className="flex flex-col items-start justify-start w-full h-full">
                 <div className="text-left">
-                  <div className="text-lg font-bold text-gray-900">Редактировать</div>
+                  <div className="text-lg font-bold text-gray-900">Править</div>
                   <div className="text-sm text-gray-500 mt-1">Внести изменения</div>
                 </div>
                 <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">

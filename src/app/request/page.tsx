@@ -615,7 +615,7 @@ export default function RequestPage() {
     return (
       <div className="min-h-screen bg-background">
         {/* Header */}
-        <div className="bg-background border-b border-border px-4 py-6 pt-safe">
+        <div className="bg-background border-b border-border px-4 py-8 pt-safe">
           <div className="flex items-center">
             <Button variant="ghost" size="sm" className="mr-3" onClick={() => setShowConfirmation(false)}>
               <ArrowLeft className="h-4 w-4" />
@@ -747,7 +747,7 @@ export default function RequestPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-background border-b border-border px-4 py-6 pt-safe">
+      <div className="bg-background border-b border-border px-4 py-8 pt-safe">
         <div className="flex items-center">
           <Link href="/">
             <Button variant="ghost" size="sm" className="mr-3">

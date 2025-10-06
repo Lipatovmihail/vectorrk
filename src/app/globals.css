@@ -123,7 +123,7 @@
 
 /* Safe area for mobile devices (iPhone notch, etc.) */
 .pt-safe {
-  padding-top: env(safe-area-inset-top, 2.5rem);
+  padding-top: env(safe-area-inset-top, 3.5rem);
 }
 
 /* Hide scrollbar for news stories */
