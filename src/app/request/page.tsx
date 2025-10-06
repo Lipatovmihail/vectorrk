@@ -954,88 +954,95 @@ export default function RequestPage() {
               />
             </div>
             ) : currentStep === 6 ? (
-              <div className="space-y-4 min-h-[150px]">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-4">Добавьте фотографии</p>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handlePhotoUpload}
-                    className="hidden"
-                    id="photo-upload"
-                  />
-                  <Button 
-                    onClick={handleTelegramPhotoUpload}
-                    disabled={isUploading}
-                    className={isUploading ? "opacity-50 cursor-not-allowed" : ""}
-                  >
-                    {isUploading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                        Загрузка...
-                      </div>
-                    ) : (
-                      "Выбрать фото"
-                    )}
-                  </Button>
-                </div>
-                
-                {formData.photos.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2">
-                    {formData.photos.map((photo, index) => {
-                      const progress = uploadProgress[index];
-                      return (
-                        <div key={index} className="relative">
-                          <Image
-                            src={photo}
-                            alt={`Фото ${index + 1}`}
-                            width={100}
-                            height={100}
-                            className="rounded-lg object-cover w-24 h-24"
-                          />
-                          
-                          {/* Индикатор прогресса */}
-                          {progress && progress.status !== 'completed' && (
-                            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                              <div className="text-white text-xs text-center">
-                                {progress.status === 'compressing' && (
-                                  <div>
-                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
-                                    <div>Сжатие...</div>
-                                  </div>
-                                )}
-                                {progress.status === 'uploading' && (
-                                  <div>
-                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
-                                    <div>Загрузка...</div>
-                                  </div>
-                                )}
-                                {progress.status === 'error' && (
-                                  <div className="text-red-300">
-                                    <div>❌</div>
-                                    <div className="text-xs">Ошибка</div>
-                                  </div>
-                                )}
+              <div className="min-h-[150px]">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                  {formData.photos.length === 0 ? (
+                    // Показываем приветствие только если нет фото
+                    <div className="text-center">
+                      <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-600 mb-4">Добавьте фотографии</p>
+                    </div>
+                  ) : (
+                    // Показываем фото в сетке
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {formData.photos.map((photo, index) => {
+                        const progress = uploadProgress[index];
+                        return (
+                          <div key={index} className="relative">
+                            <Image
+                              src={photo}
+                              alt={`Фото ${index + 1}`}
+                              width={100}
+                              height={100}
+                              className="rounded-lg object-cover w-24 h-24"
+                            />
+                            
+                            {/* Индикатор прогресса */}
+                            {progress && progress.status !== 'completed' && (
+                              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                                <div className="text-white text-xs text-center">
+                                  {progress.status === 'compressing' && (
+                                    <div>
+                                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
+                                      <div>Сжатие...</div>
+                                    </div>
+                                  )}
+                                  {progress.status === 'uploading' && (
+                                    <div>
+                                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
+                                      <div>Загрузка...</div>
+                                    </div>
+                                  )}
+                                  {progress.status === 'error' && (
+                                    <div className="text-red-300">
+                                      <div>❌</div>
+                                      <div className="text-xs">Ошибка</div>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          )}
-                          
-                          
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
-                            onClick={() => removePhoto(index)}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
+                            )}
+                            
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                              onClick={() => removePhoto(index)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  
+                  {/* Кнопка загрузки всегда видна */}
+                  <div className="text-center">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                      id="photo-upload"
+                    />
+                    <Button 
+                      onClick={handleTelegramPhotoUpload}
+                      disabled={isUploading}
+                      className={isUploading ? "opacity-50 cursor-not-allowed" : ""}
+                    >
+                      {isUploading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                          Загрузка...
                         </div>
-                      );
-                    })}
+                      ) : (
+                        formData.photos.length === 0 ? "Выбрать фото" : "Добавить еще фото"
+                      )}
+                    </Button>
                   </div>
-                )}
+                </div>
               </div>
             ) : (
               <div className="min-h-[150px] flex flex-col">
