@@ -13,23 +13,23 @@ export default function Home() {
   
   // Данные заявок
   const requests = [
-    { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В работе", icon: "Package" },
-    { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Выполнено", icon: "Building" },
-    { id: 3, title: "Кирпич керамический", object: "Школа №15", status: "Отправлена", icon: "Package" },
-    { id: 4, title: "Бетон М300", object: "Торговый центр", status: "В работе", icon: "Building" },
-    { id: 5, title: "Песок речной", object: "ЖК \"Райский\"", status: "Выполнено", icon: "Package" },
-    { id: 6, title: "Щебень гранитный", object: "Спорткомплекс", status: "В работе", icon: "Building" },
-    { id: 7, title: "Гипсокартон", object: "Офисное здание", status: "Отправлена", icon: "Package" },
-    { id: 8, title: "Утеплитель", object: "Жилой дом", status: "Выполнено", icon: "Building" }
+    { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В процессе", icon: "Package" },
+    { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Готова", icon: "Building" },
+    { id: 3, title: "Кирпич керамический", object: "Школа №15", status: "Создана", icon: "Package" },
+    { id: 4, title: "Бетон М300", object: "Торговый центр", status: "В процессе", icon: "Building" },
+    { id: 5, title: "Песок речной", object: "ЖК \"Райский\"", status: "Готова", icon: "Package" },
+    { id: 6, title: "Щебень гранитный", object: "Спорткомплекс", status: "В процессе", icon: "Building" },
+    { id: 7, title: "Гипсокартон", object: "Офисное здание", status: "Создана", icon: "Package" },
+    { id: 8, title: "Утеплитель", object: "Жилой дом", status: "Готова", icon: "Building" }
   ]
   
   // Фильтрация заявок по статусу
   const filteredRequests = activeFilter === "Все" 
     ? requests 
     : requests.filter(request => {
-        if (activeFilter === "В работе") return request.status === "В работе"
-        if (activeFilter === "Выполнено") return request.status === "Выполнено"
-        if (activeFilter === "Отправлено") return request.status === "Отправлена"
+        if (activeFilter === "Создана") return request.status === "Создана"
+        if (activeFilter === "В процессе") return request.status === "В процессе"
+        if (activeFilter === "Готова") return request.status === "Готова"
         return true
       })
   return (
@@ -247,7 +247,10 @@ export default function Home() {
       {/* Recent Requests */}
       <div className="px-4 py-2">
         <div className="bg-gray-50 rounded-2xl p-4">
-          <h2 className="text-lg font-semibold text-foreground mb-3">Последние заявки</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-1">Последние заявки</h2>
+          <p className="text-xs text-muted-foreground mb-3 leading-tight">
+            Отслеживайте статус<br />ваших заявок
+          </p>
         <div className="mb-4">
           <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
             <Button 
@@ -266,80 +269,80 @@ export default function Home() {
               variant="ghost" 
               size="sm" 
               className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
-                activeFilter === "Выполнено" 
+                activeFilter === "Создана" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
-              onClick={() => setActiveFilter("Выполнено")}
+              onClick={() => setActiveFilter("Создана")}
             >
-              Выполнено
+              Создана
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                {requests.filter(r => r.status === "Выполнено").length}
+                {requests.filter(r => r.status === "Создана").length}
               </div>
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
               className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
-                activeFilter === "В работе" 
+                activeFilter === "В процессе" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
-              onClick={() => setActiveFilter("В работе")}
+              onClick={() => setActiveFilter("В процессе")}
             >
-              В работе
+              В процессе
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                {requests.filter(r => r.status === "В работе").length}
+                {requests.filter(r => r.status === "В процессе").length}
               </div>
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
               className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
-                activeFilter === "Отправлено" 
+                activeFilter === "Готова" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
-              onClick={() => setActiveFilter("Отправлено")}
+              onClick={() => setActiveFilter("Готова")}
             >
-              Отправлено
+              Готова
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                {requests.filter(r => r.status === "Отправлена").length}
+                {requests.filter(r => r.status === "Готова").length}
               </div>
             </Button>
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {filteredRequests.map((request) => (
             <Card key={request.id}>
-              <CardContent className="p-3">
+              <CardContent className="p-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-6 h-6 bg-muted rounded-md flex items-center justify-center">
                       {request.icon === "Package" ? (
-                        <Package className="h-4 w-4 text-muted-foreground" />
+                        <Package className="h-3 w-3 text-muted-foreground" />
                       ) : (
-                        <Building className="h-4 w-4 text-muted-foreground" />
+                        <Building className="h-3 w-3 text-muted-foreground" />
                       )}
                     </div>
                     <div>
-                      <div className="font-medium text-foreground">{request.title}</div>
-                      <div className="text-sm text-muted-foreground">Объект: {request.object}</div>
+                      <div className="font-medium text-foreground text-sm">{request.title}</div>
+                      <div className="text-xs text-muted-foreground">Объект: {request.object}</div>
                     </div>
                   </div>
-                  <Badge className={
-                    request.status === "В работе" 
+                  <Badge className={`text-xs px-2 py-0.5 ${
+                    request.status === "В процессе" 
                       ? "bg-yellow-100 text-yellow-800 border-yellow-200"
-                      : request.status === "Выполнено"
+                      : request.status === "Готова"
                       ? "bg-green-100 text-green-800 border-green-200"
-                      : "bg-gray-100 text-gray-800 border-gray-200"
-                  }>
-                    {request.status === "В работе" ? (
-                      <Clock className="h-3 w-3 mr-1" />
-                    ) : request.status === "Выполнено" ? (
-                      <CheckCircle className="h-3 w-3 mr-1" />
+                      : "bg-blue-100 text-blue-800 border-blue-200"
+                  }`}>
+                    {request.status === "В процессе" ? (
+                      <Clock className="h-2.5 w-2.5 mr-1" />
+                    ) : request.status === "Готова" ? (
+                      <CheckCircle className="h-2.5 w-2.5 mr-1" />
                     ) : (
-                      <Clock className="h-3 w-3 mr-1" />
+                      <Clock className="h-2.5 w-2.5 mr-1" />
                     )}
                     {request.status}
                   </Badge>

@@ -622,7 +622,9 @@ export default function RequestPage() {
             </Button>
             <div>
               <h1 className="text-xl font-bold text-foreground">Подтверждение заявки</h1>
-              <p className="text-sm text-muted-foreground">Проверьте данные перед отправкой</p>
+              <p className="text-xs text-muted-foreground leading-tight">
+                Проверьте данные<br />перед отправкой
+              </p>
             </div>
           </div>
         </div>
@@ -711,14 +713,14 @@ export default function RequestPage() {
           <div className="flex gap-3 pb-6">
             <Button 
               variant="outline" 
-              className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={() => setShowConfirmation(false)}
               disabled={isUploading}
             >
-              Редактировать
+              Править
             </Button>
             <Button 
-              className={`flex-1 h-12 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={handleSubmitRequest}
               disabled={isUploading}
             >
@@ -754,7 +756,9 @@ export default function RequestPage() {
           </Link>
           <div>
             <h1 className="text-xl font-bold text-foreground">Новая заявка</h1>
-            <p className="text-sm text-muted-foreground">Шаг {currentStep}/6</p>
+            <p className="text-xs text-muted-foreground leading-tight">
+              Шаг {currentStep}/6
+            </p>
           </div>
         </div>
       </div>
@@ -772,16 +776,16 @@ export default function RequestPage() {
 
       <div className="px-4 py-2">
         <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-baseline gap-2 mb-2">
             <span className="text-2xl font-bold text-primary">{currentStep}</span>
-            <span className="text-sm text-muted-foreground">из 6</span>
+            <span className="text-xs text-muted-foreground">из 6</span>
           </div>
           <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1 leading-tight">
             {currentStep === 6 
-              ? "Можно пропустить шаг, нажав на кнопку \"Завершить\""
+              ? "Нажмите \"Завершить\",<br />чтобы пропустить"
               : currentStep === 5
-              ? "Укажите необходимые материалы списком"
+              ? "Укажите необходимые<br />материалы списком"
               : `Например, "${currentStepData.placeholder}"`
             }
           </p>
