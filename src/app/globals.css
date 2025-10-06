@@ -121,6 +121,11 @@
   }
 }
 
+/* Safe area for mobile devices (iPhone notch, etc.) */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 1rem);
+}
+
 /* Hide scrollbar for news stories */
 .scrollbar-hide {
   -ms-overflow-style: none;
