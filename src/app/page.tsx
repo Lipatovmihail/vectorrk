@@ -344,11 +344,13 @@ export default function Home() {
 
       {/* Recent Requests */}
       <div className="px-4 py-2">
-        <div className="bg-gray-50 rounded-2xl px-4 py-2">
-          <h2 className="text-lg font-semibold text-foreground mb-1">Последние заявки</h2>
-          <p className="text-xs text-muted-foreground mb-3 leading-tight">
-            Отслеживайте статус ваших заявок
-          </p>
+        <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-2 shadow-sm">
+          <div className="px-4">
+            <h2 className="text-lg font-semibold text-foreground mb-1">Последние заявки</h2>
+            <p className="text-xs text-muted-foreground mb-3 leading-tight">
+              Отслеживайте статус ваших заявок
+            </p>
+          </div>
           
           {/* Экран загрузки */}
           {isLoading ? (
@@ -357,7 +359,7 @@ export default function Home() {
               <p className="text-sm text-muted-foreground">Загрузка заявок...</p>
             </div>
           ) : (
-            <>
+            <div className="px-4">
         <div className="mb-4">
           <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
             <Button 
@@ -473,7 +475,7 @@ export default function Home() {
             </Card>
           ))}
         </div>
-            </>
+            </div>
           )}
         </div>
       </div>
