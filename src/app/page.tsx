@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Building, Package, Clock, CheckCircle, ArrowRight } from "lucide-react"
+import { Package, Clock, CheckCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
@@ -14,10 +14,11 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [requests, setRequests] = useState<Array<{
     id: number;
-    title: string;
-    object: string;
+    object_name: string;
+    order_number: string;
+    object_address: string;
+    delivery_datetime: string;
     status: string;
-    icon: string;
   }>>([])
   const [editableCount, setEditableCount] = useState(0)
   
@@ -53,9 +54,9 @@ export default function Home() {
         console.log('⚠️ Telegram WebApp не обнаружен, используем mock данные');
         // Fallback для локального тестирования
         setRequests([
-          { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В процессе", icon: "Package" },
-          { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Готова", icon: "Building" },
-          { id: 3, title: "Кирпич керамический", object: "Школа №15", status: "Создана", icon: "Package" }
+          { id: 1, object_name: "ЖК \"Солнечный\"", order_number: "НЗ 545/204", object_address: "ул. Солнечная, 15", delivery_datetime: "2024-12-20 14:00:00", status: "В процессе" },
+          { id: 2, object_name: "Офисный центр", order_number: "НЗ 546/205", object_address: "пр. Центральный, 10", delivery_datetime: "2024-12-18 10:00:00", status: "Готова" },
+          { id: 3, object_name: "Школа №15", order_number: "НЗ 547/206", object_address: "ул. Школьная, 5", delivery_datetime: "2024-12-22 16:00:00", status: "Создана" }
         ]);
         setEditableCount(2);
         setIsLoading(false);
@@ -110,8 +111,8 @@ export default function Home() {
       
       // Fallback данные при ошибке
       setRequests([
-        { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В процессе", icon: "Package" },
-        { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Готова", icon: "Building" }
+        { id: 1, object_name: "ЖК \"Солнечный\"", order_number: "НЗ 545/204", object_address: "ул. Солнечная, 15", delivery_datetime: "2024-12-20 14:00:00", status: "В процессе" },
+        { id: 2, object_name: "Офисный центр", order_number: "НЗ 546/205", object_address: "пр. Центральный, 10", delivery_datetime: "2024-12-18 10:00:00", status: "Готова" }
       ]);
       setEditableCount(0);
     } finally {
@@ -345,7 +346,7 @@ export default function Home() {
         <div className="bg-gray-50 rounded-2xl p-4">
           <h2 className="text-lg font-semibold text-foreground mb-1">Последние заявки</h2>
           <p className="text-xs text-muted-foreground mb-3 leading-tight">
-            Отслеживайте статус<br />ваших заявок
+            Отслеживайте статус ваших заявок
           </p>
           
           {/* Экран загрузки */}
@@ -424,15 +425,19 @@ export default function Home() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <div className="w-6 h-6 bg-muted rounded-md flex items-center justify-center">
-                      {request.icon === "Package" ? (
-                        <Package className="h-3 w-3 text-muted-foreground" />
-                      ) : (
-                        <Building className="h-3 w-3 text-muted-foreground" />
-                      )}
+                      <Package className="h-3 w-3 text-muted-foreground" />
                     </div>
                     <div>
-                      <div className="font-medium text-foreground text-sm">{request.title}</div>
-                      <div className="text-xs text-muted-foreground">Объект: {request.object}</div>
+                      <div className="font-medium text-foreground text-sm">{request.object_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(request.delivery_datetime).toLocaleDateString('ru-RU', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })} • {request.object_address} • {request.order_number}
+                      </div>
                     </div>
                   </div>
                   <Badge className={`text-xs px-2 py-0.5 ${
