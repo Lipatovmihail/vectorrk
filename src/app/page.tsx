@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Package, Clock, ArrowRight, Circle } from "lucide-react"
+import { Package, Clock, ArrowRight, CheckCircle } from "lucide-react"
 import { IconCircleCheckFilled } from "@tabler/icons-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -451,7 +451,7 @@ export default function Home() {
                     ) : request.status === "Готова" ? (
                       <IconCircleCheckFilled className="h-2.5 w-2.5 mr-1 fill-green-500 dark:fill-green-400" />
                     ) : (
-                      <Circle className="h-2.5 w-2.5 mr-1 text-blue-500" />
+                      <CheckCircle className="h-2.5 w-2.5 mr-1 text-blue-500" />
                     )}
                     {request.status}
                   </Badge>
