@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Package, Clock, CheckCircle, ArrowRight, Circle } from "lucide-react"
+import { Package, Clock, ArrowRight, Circle } from "lucide-react"
+import { IconCircleCheckFilled } from "@tabler/icons-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
@@ -54,7 +55,7 @@ export default function Home() {
         console.log('⚠️ Telegram WebApp не обнаружен, используем mock данные');
         // Fallback для локального тестирования
         setRequests([
-          { id: 1, object_name: "ЖК \"Солнечный\"", order_number: "НЗ 545/204", object_address: "ул. Солнечная, 15", delivery_datetime: "2024-12-20 14:00:00", status: "В процессе" },
+          { id: 1, object_name: "ЖК \"Солнечный\"", order_number: "НЗ 545/204", object_address: "ул. Солнечная, 15", delivery_datetime: "2024-12-20 14:00:00", status: "В работе" },
           { id: 2, object_name: "Офисный центр", order_number: "НЗ 546/205", object_address: "пр. Центральный, 10", delivery_datetime: "2024-12-18 10:00:00", status: "Готова" },
           { id: 3, object_name: "Школа №15", order_number: "НЗ 547/206", object_address: "ул. Школьная, 5", delivery_datetime: "2024-12-22 16:00:00", status: "Создана" }
         ]);
@@ -111,7 +112,7 @@ export default function Home() {
       
       // Fallback данные при ошибке
       setRequests([
-        { id: 1, object_name: "ЖК \"Солнечный\"", order_number: "НЗ 545/204", object_address: "ул. Солнечная, 15", delivery_datetime: "2024-12-20 14:00:00", status: "В процессе" },
+        { id: 1, object_name: "ЖК \"Солнечный\"", order_number: "НЗ 545/204", object_address: "ул. Солнечная, 15", delivery_datetime: "2024-12-20 14:00:00", status: "В работе" },
         { id: 2, object_name: "Офисный центр", order_number: "НЗ 546/205", object_address: "пр. Центральный, 10", delivery_datetime: "2024-12-18 10:00:00", status: "Готова" }
       ]);
       setEditableCount(0);
@@ -125,7 +126,7 @@ export default function Home() {
     ? requests 
     : requests.filter(request => {
         if (activeFilter === "Создана") return request.status === "Создана"
-        if (activeFilter === "В процессе") return request.status === "В процессе"
+        if (activeFilter === "В работе") return request.status === "В работе"
         if (activeFilter === "Готова") return request.status === "Готова"
         return true
       })
@@ -390,15 +391,15 @@ export default function Home() {
               variant="ghost" 
               size="sm" 
               className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
-                activeFilter === "В процессе" 
+                activeFilter === "В работе" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
-              onClick={() => setActiveFilter("В процессе")}
+              onClick={() => setActiveFilter("В работе")}
             >
-              В процессе
+              В работе
               <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
-                {requests.filter(r => r.status === "В процессе").length}
+                {requests.filter(r => r.status === "В работе").length}
               </div>
             </Button>
             <Button 
@@ -445,16 +446,14 @@ export default function Home() {
                     </div>
                   </div>
                   <Badge variant="outline" className="text-muted-foreground px-1.5">
-                    {request.status === "В процессе" ? (
+                    {request.status === "В работе" ? (
                       <Clock className="h-3 w-3 mr-1 text-orange-500" />
                     ) : request.status === "Готова" ? (
-                      <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
+                      <IconCircleCheckFilled className="h-3 w-3 mr-1 fill-green-500 dark:fill-green-400" />
                     ) : (
                       <Circle className="h-3 w-3 mr-1 text-blue-500" />
                     )}
-                    {request.status === "В процессе" ? "In Process" : 
-                     request.status === "Готова" ? "Done" : 
-                     request.status}
+                    {request.status}
                   </Badge>
                 </div>
               </CardContent>
