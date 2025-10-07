@@ -436,7 +436,11 @@ export default function Home() {
                           year: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit'
-                        })} • {request.object_address} • {request.order_number}
+                        })}
+                        <br />
+                        {request.object_address}
+                        <br />
+                        {request.order_number}
                       </div>
                     </div>
                   </div>
