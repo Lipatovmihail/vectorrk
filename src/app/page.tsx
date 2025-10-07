@@ -419,18 +419,18 @@ export default function Home() {
             </Button>
           </div>
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           {filteredRequests.map((request) => (
             <Card key={request.id}>
-              <CardContent className="p-2.5">
+              <CardContent className="p-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2.5">
-                    <div className="w-6 h-6 bg-muted rounded-md flex items-center justify-center">
-                      <Package className="h-3 w-3 text-muted-foreground" />
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 bg-muted rounded-md flex items-center justify-center">
+                      <Package className="h-2.5 w-2.5 text-muted-foreground" />
                     </div>
                     <div>
-                      <div className="font-medium text-foreground text-sm">{request.object_name}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="font-medium text-foreground text-xs">{request.object_name}</div>
+                      <div className="text-[10px] text-muted-foreground">
                         {new Date(request.delivery_datetime).toLocaleDateString('ru-RU', {
                           day: '2-digit',
                           month: '2-digit',
@@ -445,13 +445,13 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-muted-foreground px-1.5">
+                  <Badge variant="outline" className="text-muted-foreground px-1 py-0.5 text-[10px]">
                     {request.status === "В работе" ? (
-                      <Clock className="h-3 w-3 mr-1 text-orange-500" />
+                      <Clock className="h-2.5 w-2.5 mr-1 text-orange-500" />
                     ) : request.status === "Готова" ? (
-                      <IconCircleCheckFilled className="h-3 w-3 mr-1 fill-green-500 dark:fill-green-400" />
+                      <IconCircleCheckFilled className="h-2.5 w-2.5 mr-1 fill-green-500 dark:fill-green-400" />
                     ) : (
-                      <Circle className="h-3 w-3 mr-1 text-blue-500" />
+                      <Circle className="h-2.5 w-2.5 mr-1 text-blue-500" />
                     )}
                     {request.status}
                   </Badge>
