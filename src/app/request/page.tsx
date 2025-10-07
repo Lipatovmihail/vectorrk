@@ -134,6 +134,14 @@ export default function RequestPage() {
   
   // Состояние для блокировки кнопки отправки заявки
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Состояние для проверки прав пользователя
+  const [userPermissions, setUserPermissions] = useState({
+    canCreateRequests: true,
+    canEditRequests: false,
+    canViewAllRequests: false,
+    isAdmin: false
+  })
 
   // Инициализация Telegram WebApp (как в sellerkit)
   useEffect(() => {
@@ -169,6 +177,9 @@ export default function RequestPage() {
         if (telegramId) {
           localStorage.setItem('telegram_id', telegramId.toString());
           console.log('💾 Telegram ID сохранен в localStorage:', telegramId);
+          
+          // Проверяем права пользователя
+          checkUserPermissions(telegramId);
           
           // Telegram WebApp инициализирован, данные сохранены
           console.log('✅ Telegram WebApp инициализирован успешно');
@@ -241,6 +252,28 @@ export default function RequestPage() {
     
     console.log('🔍 getTelegramData:', { telegram_id: telegramId, initData: initData ? 'есть' : 'нет' });
     return { telegram_id: telegramId, initData };
+  }
+
+  // Функция проверки прав пользователя
+  const checkUserPermissions = (telegramId: number) => {
+    // Список админов (можно вынести в переменные окружения)
+    const adminIds = [237551991, 123456789]; // Замените на реальные ID админов
+    
+    // Список пользователей с правами редактирования
+    const editorIds = [237551991, 987654321]; // Замените на реальные ID редакторов
+    
+    // Список пользователей с правами просмотра всех заявок
+    const viewerIds = [237551991, 555666777]; // Замените на реальные ID просмотрщиков
+    
+    const permissions = {
+      canCreateRequests: true, // Все могут создавать заявки
+      canEditRequests: editorIds.includes(telegramId),
+      canViewAllRequests: viewerIds.includes(telegramId),
+      isAdmin: adminIds.includes(telegramId)
+    };
+    
+    setUserPermissions(permissions);
+    console.log('🔐 Права пользователя:', permissions);
   }
 
   // Функция для конвертации blob URL в base64
@@ -697,14 +730,16 @@ export default function RequestPage() {
           </div>
 
           <div className="flex gap-3 pb-6">
-            <Button 
-              variant="outline" 
-              className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
-              onClick={() => setShowConfirmation(false)}
-              disabled={isUploading}
-            >
-              Править
-            </Button>
+            {userPermissions.canEditRequests && (
+              <Button 
+                variant="outline" 
+                className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={() => setShowConfirmation(false)}
+                disabled={isUploading}
+              >
+                Править
+              </Button>
+            )}
             <Button 
               className={`flex-1 h-12 text-sm ${(isUploading || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={handleSubmitRequest}

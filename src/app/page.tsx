@@ -11,6 +11,15 @@ import { toast } from "sonner"
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState("Все")
+  const [isLoading, setIsLoading] = useState(true)
+  const [requests, setRequests] = useState<Array<{
+    id: number;
+    title: string;
+    object: string;
+    status: string;
+    icon: string;
+  }>>([])
+  const [editableCount, setEditableCount] = useState(0)
   
   // Проверяем URL параметры для показа toast уведомлений
   useEffect(() => {
@@ -24,18 +33,91 @@ export default function Home() {
       window.history.replaceState({}, '', '/');
     }
   }, []);
-  
-  // Данные заявок
-  const requests = [
-    { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В процессе", icon: "Package" },
-    { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Готова", icon: "Building" },
-    { id: 3, title: "Кирпич керамический", object: "Школа №15", status: "Создана", icon: "Package" },
-    { id: 4, title: "Бетон М300", object: "Торговый центр", status: "В процессе", icon: "Building" },
-    { id: 5, title: "Песок речной", object: "ЖК \"Райский\"", status: "Готова", icon: "Package" },
-    { id: 6, title: "Щебень гранитный", object: "Спорткомплекс", status: "В процессе", icon: "Building" },
-    { id: 7, title: "Гипсокартон", object: "Офисное здание", status: "Создана", icon: "Package" },
-    { id: 8, title: "Утеплитель", object: "Жилой дом", status: "Готова", icon: "Building" }
-  ]
+
+  // Загружаем данные заявок при загрузке страницы
+  useEffect(() => {
+    loadRequestsData();
+  }, []);
+
+  // Функция загрузки данных заявок
+  const loadRequestsData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Получаем данные пользователя из Telegram
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      const initData = window.Telegram?.WebApp?.initData;
+      const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      
+      if (!telegramId) {
+        console.log('⚠️ Telegram WebApp не обнаружен, используем mock данные');
+        // Fallback для локального тестирования
+        setRequests([
+          { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В процессе", icon: "Package" },
+          { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Готова", icon: "Building" },
+          { id: 3, title: "Кирпич керамический", object: "Школа №15", status: "Создана", icon: "Package" }
+        ]);
+        setEditableCount(2);
+        setIsLoading(false);
+        return;
+      }
+
+      // Отправляем запрос к n8n для получения данных заявок
+      const requestData = {
+        page: "home",
+        mode: "load_requests",
+        telegram_id: telegramId,
+        initData: initData,
+        telegram_user: telegramUser ? {
+          id: telegramUser.id,
+          first_name: telegramUser.first_name,
+          last_name: telegramUser.last_name,
+          username: telegramUser.username,
+          language_code: telegramUser.language_code,
+          is_premium: telegramUser.is_premium,
+          photo_url: telegramUser.photo_url
+        } : null,
+        timestamp: new Date().toISOString()
+      };
+
+      console.log('📤 Отправляем запрос на загрузку заявок:', requestData);
+
+      const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('📦 Получены данные заявок:', data);
+
+      // Обрабатываем ответ от n8n
+      if (data.success) {
+        setRequests(data.requests || []);
+        setEditableCount(data.editableCount || 0);
+      } else {
+        console.error('❌ Ошибка получения данных:', data.error);
+        toast.error('Ошибка загрузки данных заявок');
+      }
+
+    } catch (error) {
+      console.error('❌ Ошибка загрузки данных:', error);
+      toast.error('Ошибка загрузки данных заявок');
+      
+      // Fallback данные при ошибке
+      setRequests([
+        { id: 1, title: "Цемент М400", object: "ЖК \"Солнечный\"", status: "В процессе", icon: "Package" },
+        { id: 2, title: "Арматура А500С", object: "Офисный центр", status: "Готова", icon: "Building" }
+      ]);
+      setEditableCount(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // Фильтрация заявок по статусу
   const filteredRequests = activeFilter === "Все" 
@@ -235,7 +317,7 @@ export default function Home() {
                   <div className="text-sm text-gray-500 mt-1">Внести изменения</div>
                 </div>
                 <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  3
+                  {editableCount}
                 </div>
               </div>
             </Button>
@@ -265,6 +347,15 @@ export default function Home() {
           <p className="text-xs text-muted-foreground mb-3 leading-tight">
             Отслеживайте статус<br />ваших заявок
           </p>
+          
+          {/* Экран загрузки */}
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full mb-3"></div>
+              <p className="text-sm text-muted-foreground">Загрузка заявок...</p>
+            </div>
+          ) : (
+            <>
         <div className="mb-4">
           <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
             <Button 
@@ -365,6 +456,8 @@ export default function Home() {
             </Card>
           ))}
         </div>
+            </>
+          )}
         </div>
       </div>
 
