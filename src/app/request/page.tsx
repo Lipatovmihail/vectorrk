@@ -285,7 +285,7 @@ export default function RequestPage() {
         },
         timestamp: moscowTime,
         page: "request-form",
-        mode: "submit",
+        mode: "create",
         telegram_id: telegram_id,
         initData: initData,
         // ★ Добавляем полную информацию о пользователе Telegram
