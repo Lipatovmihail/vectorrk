@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ArrowLeft, Calendar, Camera, Check, X, Clock } from "lucide-react"
+import { ArrowLeft, Calendar, Camera, Check, X } from "lucide-react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -801,7 +801,7 @@ export default function RequestPage() {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-auto p-0" align="start" sideOffset={5}>
                     <CalendarComponent
                       mode="single"
                       selected={formData.deliveryDate || undefined}
@@ -817,17 +817,14 @@ export default function RequestPage() {
               </div>
               <div className="flex-1">
                 <Label className="text-sm font-medium mb-2 block text-muted-foreground">Время (необязательно)</Label>
-                <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input 
-                    type="time"
-                    placeholder="16:10"
-                    value={formData.deliveryTime}
-                    onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
-                    onKeyPress={handleKeyPress}
-                    className="pl-10 h-12 bg-muted/50 border-muted text-muted-foreground"
-                  />
-                </div>
+                <Input 
+                  type="time"
+                  placeholder="16:10"
+                  value={formData.deliveryTime}
+                  onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                  onKeyPress={handleKeyPress}
+                  className="h-12"
+                />
               </div>
             </div>
             </div>
