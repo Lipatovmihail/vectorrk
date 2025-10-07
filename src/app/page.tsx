@@ -65,7 +65,7 @@ export default function Home() {
       // Отправляем запрос к n8n для получения данных заявок
       const requestData = {
         page: "home",
-        mode: "load_requests",
+        mode: "main",
         telegram_id: telegramId,
         initData: initData,
         telegram_user: telegramUser ? {
