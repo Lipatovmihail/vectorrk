@@ -344,7 +344,7 @@ export default function Home() {
 
       {/* Recent Requests */}
       <div className="px-4 py-2">
-        <div className="bg-gray-50 rounded-2xl p-4">
+        <div className="bg-gray-50 rounded-2xl px-4 py-2">
           <h2 className="text-lg font-semibold text-foreground mb-1">Последние заявки</h2>
           <p className="text-xs text-muted-foreground mb-3 leading-tight">
             Отслеживайте статус ваших заявок
@@ -429,15 +429,28 @@ export default function Home() {
                       <Package className="h-2.5 w-2.5 text-muted-foreground" />
                     </div>
                     <div>
-                      <div className="font-medium text-foreground text-xs">{request.object_name}</div>
-                      <div className="text-[10px] text-muted-foreground">
-                        {new Date(request.delivery_datetime).toLocaleDateString('ru-RU', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                      <div className="font-medium text-foreground text-sm">{request.object_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {(() => {
+                          const date = new Date(request.delivery_datetime);
+                          const hours = date.getHours();
+                          const minutes = date.getMinutes();
+                          const showTime = hours !== 0 || minutes !== 0;
+                          
+                          return showTime 
+                            ? date.toLocaleDateString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })
+                            : date.toLocaleDateString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              });
+                        })()}
                         <br />
                         {request.object_address}
                         <br />
@@ -445,13 +458,13 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-muted-foreground px-1 py-0.5 text-[10px]">
+                  <Badge variant="outline" className="text-muted-foreground px-1.5 py-0.5 text-xs">
                     {request.status === "В работе" ? (
-                      <Clock className="h-2.5 w-2.5 mr-1 text-orange-500" />
+                      <Clock className="h-3 w-3 mr-1 text-orange-500" />
                     ) : request.status === "Готова" ? (
-                      <IconCircleCheckFilled className="h-2.5 w-2.5 mr-1 fill-green-500 dark:fill-green-400" />
+                      <IconCircleCheckFilled className="h-3 w-3 mr-1 fill-green-500 dark:fill-green-400" />
                     ) : (
-                      <CheckCircle className="h-2.5 w-2.5 mr-1 text-blue-500" />
+                      <CheckCircle className="h-3 w-3 mr-1 text-blue-500" />
                     )}
                     {request.status}
                   </Badge>
