@@ -3,8 +3,6 @@
 import * as React from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis, Label, Pie, PieChart, Legend } from "recharts"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 
 import {
   Card,
@@ -65,10 +63,49 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+// Типы для данных от n8n
+interface AnalyticsData {
+  success: boolean;
+  barChartData: Array<{
+    month: string;
+    created: number;
+    completed: number;
+  }>;
+  pieChartData: Array<{
+    browser: string;
+    count: number;
+    visitors?: number;
+    fill?: string;
+  }>;
+  analytics: {
+    growthPercentage: number;
+    periodDescription: string;
+    totalRequests: number;
+    currentMonthRequests: number;
+    previousMonthRequests: number;
+  };
+}
+
 export default function AnalyticsPage() {
+  // Состояние для данных от n8n
+  const [analyticsData, setAnalyticsData] = React.useState<AnalyticsData | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  // Используем реальные данные или fallback на моковые
+  const currentBarChartData = analyticsData?.barChartData || chartData;
+  const currentPieChartData = analyticsData?.pieChartData || pieChartData;
+  const currentAnalytics = analyticsData?.analytics || { 
+    growthPercentage: 5.2, 
+    periodDescription: "Показаны общие данные за последние 6 месяцев" 
+  };
+
   const totalVisitors = React.useMemo(() => {
-    return pieChartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  }, [])
+    return currentPieChartData.reduce((acc, curr) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const value = (curr as any).visitors || (curr as any).count || 0;
+      return acc + value;
+    }, 0)
+  }, [currentPieChartData])
 
   // Отправка webhook при загрузке страницы
   React.useEffect(() => {
@@ -122,8 +159,17 @@ export default function AnalyticsPage() {
 
         const data = await response.json();
         console.log('📦 Получены данные аналитики:', data);
+        
+        // Сохраняем данные от n8n
+        if (data.success) {
+          setAnalyticsData(data);
+        } else {
+          console.error('❌ Ошибка получения данных:', data.error);
+        }
       } catch (error) {
         console.error('❌ Ошибка отправки webhook:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -134,21 +180,19 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="font-bold">Назад</span>
-            </Link>
-          </div>
-          <div className="flex flex-1 items-center justify-center">
-            <h1 className="text-lg font-semibold">Аналитика</h1>
-          </div>
+        <div className="container flex h-14 items-center justify-center pt-safe pt-12">
+          <h1 className="text-lg font-semibold">Аналитика</h1>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full mb-3"></div>
+            <p className="text-sm text-muted-foreground">Загрузка аналитики...</p>
+          </div>
+        ) : (
         <div className="space-y-6">
           {/* Chart Card */}
           <div className="rounded-2xl p-4" style={{backgroundColor: '#f8f9fa'}}>
@@ -161,7 +205,7 @@ export default function AnalyticsPage() {
               <ChartContainer config={chartConfig}>
                 <BarChart
                   accessibilityLayer
-                  data={chartData}
+                  data={currentBarChartData}
                   layout="vertical"
                   margin={{
                     right: 16,
@@ -208,10 +252,10 @@ export default function AnalyticsPage() {
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
               <div className="flex gap-2 leading-none font-medium">
-                Рост на 5.2% в этом месяце <TrendingUp className="h-4 w-4" />
+                Рост на {currentAnalytics.growthPercentage}% в этом месяце <TrendingUp className="h-4 w-4" />
               </div>
               <div className="text-muted-foreground leading-none">
-                Показаны общие данные за последние 6 месяцев
+                {currentAnalytics.periodDescription}
               </div>
             </CardFooter>
             </Card>
@@ -235,8 +279,8 @@ export default function AnalyticsPage() {
                       content={<ChartTooltipContent hideLabel />}
                     />
                     <Pie
-                      data={pieChartData}
-                      dataKey="visitors"
+                      data={currentPieChartData}
+                      dataKey={currentPieChartData[0]?.visitors ? "visitors" : "count"}
                       nameKey="browser"
                       innerRadius={60}
                       strokeWidth={5}
@@ -280,7 +324,7 @@ export default function AnalyticsPage() {
                       }}
                       content={() => (
                         <div className="flex items-center justify-center gap-1 pt-2">
-                          {pieChartData.map((item) => (
+                          {currentPieChartData.map((item) => (
                             <div
                               key={item.browser}
                               className="flex items-center gap-1.5 text-xs px-1 py-1 rounded-md"
@@ -300,15 +344,16 @@ export default function AnalyticsPage() {
               </CardContent>
               <CardFooter className="flex-col gap-2 text-sm">
                 <div className="flex items-center gap-2 leading-none font-medium">
-                  Рост на 5.2% в этом месяце <TrendingUp className="h-4 w-4" />
+                  Рост на {currentAnalytics.growthPercentage}% в этом месяце <TrendingUp className="h-4 w-4" />
                 </div>
                 <div className="text-muted-foreground leading-none">
-                  Показаны общие данные за последние 6 месяцев
+                  {currentAnalytics.periodDescription}
                 </div>
               </CardFooter>
             </Card>
           </div>
         </div>
+        )}
       </div>
     </div>
   )

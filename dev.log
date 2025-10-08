@@ -53,3 +53,29 @@
  ✓ Compiled in 192ms
  ✓ Compiled in 162ms
  ✓ Compiled in 194ms
+ GET /analytics 200 in 334ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 860ms
+ ✓ Compiled in 477ms
+ ✓ Compiled in 474ms
+ ✓ Compiled in 132ms
+ ✓ Compiled in 362ms
+ ✓ Compiled in 95ms
+ ✓ Compiled in 98ms
+ GET /analytics 200 in 488ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 2099ms
+ ✓ Compiled in 105ms
+ GET /analytics 200 in 811ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 570ms
+ ✓ Compiled in 97ms
+ ✓ Compiled in 98ms
+ ✓ Compiled in 89ms
+ ✓ Compiled in 85ms
+ ✓ Compiled in 127ms
+ ✓ Compiled in 118ms
+ ✓ Compiled /analytics in 31ms
+ GET /analytics 200 in 153ms
+ ✓ Compiled in 124ms
+ ✓ Compiled in 124ms
+ ✓ Compiled in 99ms
+ ✓ Compiled in 126ms
+ ✓ Compiled in 157ms
