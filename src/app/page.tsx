@@ -1,8 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Package, Clock, ArrowRight, CheckCircle } from "lucide-react"
 import { IconCircleCheckFilled } from "@tabler/icons-react"
 import Link from "next/link"
@@ -439,10 +437,8 @@ export default function Home() {
         </div>
         <div className="space-y-1">
           {filteredRequests.map((request) => (
-            <Link key={request.id} href={`/edit?id=${request.id}`}>
-              <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
-                <CardContent className="p-2">
-                  <div className="flex items-center justify-between">
+            <div key={request.id} className="p-2 bg-white border border-gray-200 rounded-lg">
+                <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className="w-5 h-5 bg-muted rounded-md flex items-center justify-center">
                         <Package className="h-2.5 w-2.5 text-muted-foreground" />
@@ -477,20 +473,20 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-muted-foreground px-1.5 py-0.5 text-xs">
-                    {request.status === "В работе" ? (
-                      <Clock className="h-3 w-3 mr-1 text-orange-500" />
-                    ) : request.status === "Готова" ? (
-                      <IconCircleCheckFilled className="h-3 w-3 mr-1 fill-green-500 dark:fill-green-400" />
-                    ) : (
-                      <CheckCircle className="h-3 w-3 mr-1 text-blue-500" />
-                    )}
-                    {request.status}
-                  </Badge>
+                  <div className="text-right">
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium text-muted-foreground border border-gray-200">
+                      {request.status === "В работе" ? (
+                        <Clock className="h-3 w-3 mr-1 text-orange-500" />
+                      ) : request.status === "Готова" ? (
+                        <IconCircleCheckFilled className="h-3 w-3 mr-1 fill-green-500 dark:fill-green-400" />
+                      ) : (
+                        <CheckCircle className="h-3 w-3 mr-1 text-blue-500" />
+                      )}
+                      {request.status}
+                    </span>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-            </Link>
+              </div>
           ))}
         </div>
             </>

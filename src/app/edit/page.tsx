@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, X, Package } from "lucide-react";
+import { Check, X, Package, Clock, CheckCircle } from "lucide-react";
+import { IconCircleCheckFilled } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Suspense } from "react";
@@ -279,11 +280,14 @@ function EditPageContent() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${
-                        request.status === 'Готова' ? 'bg-green-100 text-green-800' :
-                        request.status === 'В работе' ? 'bg-orange-100 text-orange-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium text-muted-foreground border border-gray-200">
+                        {request.status === "В работе" ? (
+                          <Clock className="h-3 w-3 mr-1 text-orange-500" />
+                        ) : request.status === "Готова" ? (
+                          <IconCircleCheckFilled className="h-3 w-3 mr-1 fill-green-500 dark:fill-green-400" />
+                        ) : (
+                          <CheckCircle className="h-3 w-3 mr-1 text-blue-500" />
+                        )}
                         {request.status}
                       </span>
                     </div>
@@ -511,7 +515,7 @@ function EditPageContent() {
           <Button
             variant="outline"
             className="flex-1 h-12 bg-white border border-gray-200 hover:bg-gray-50"
-            onClick={() => router.push('/')}
+            onClick={() => setSelectedRequest(null)}
           >
             Отменить
           </Button>
