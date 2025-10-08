@@ -477,3 +477,102 @@
  GET /edit?id=3 200 in 239ms
  ✓ Compiled in 693ms
  ✓ Compiled in 252ms
+ ✓ Compiled / in 166ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2s
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.umcdjp6be5'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.umcdjp6be5'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1dqj4gx078c'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1dqj4gx078c'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.trwiyqpiemr'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.trwiyqpiemr'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.84abosmivwc'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.84abosmivwc'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.2h9zlw4wfwc'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.2h9zlw4wfwc'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.4n4ikm0mkjp'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.4n4ikm0mkjp'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.zkrqjpd9hb'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.zkrqjpd9hb'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.hc2ucdyu0ni'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.hc2ucdyu0ni'
+}
+[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1a7byxx3t7t'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1a7byxx3t7t'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
+}

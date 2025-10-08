@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Check, X, Package, Clock, CheckCircle } from "lucide-react";
 import { IconCircleCheckFilled } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,6 @@ const mockRequests = [
 ];
 
 function EditPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const requestId = searchParams.get('id');
 
@@ -47,6 +46,8 @@ function EditPageContent() {
   const [editingField, setEditingField] = React.useState<string | null>(null);
   const [editedValue, setEditedValue] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState(true);
+  const [changes, setChanges] = React.useState<{[key: string]: {old: string, new: string}}>({});
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [editRequests, setEditRequests] = React.useState<Array<{
     id_fact: number;
     object_name: string;
@@ -75,6 +76,7 @@ function EditPageContent() {
     if (requestId) {
       const request = editRequests.find(r => r.id_fact === parseInt(requestId));
       setSelectedRequest(request || null);
+      setChanges({}); // Очищаем изменения при переходе к новой заявке
     }
   }, [requestId, editRequests]);
 
@@ -186,6 +188,15 @@ function EditPageContent() {
       return; // Ничего не изменилось, не показываем уведомление
     }
 
+    // Сохраняем изменение в состояние
+    setChanges(prev => ({
+      ...prev,
+      [field]: {
+        old: currentValue,
+        new: newValue
+      }
+    }));
+
     // Обновляем данные
     const updatedRequest = { ...selectedRequest };
     switch (field) {
@@ -234,6 +245,77 @@ function EditPageContent() {
     setEditedValue('');
   };
 
+  const submitChanges = async () => {
+    if (!selectedRequest || Object.keys(changes).length === 0) {
+      toast.warning('Нет изменений для отправки');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Получаем данные пользователя из Telegram
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      const initData = window.Telegram?.WebApp?.initData;
+      const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+      if (!telegramId) {
+        toast.error('Ошибка: Telegram WebApp не обнаружен');
+        return;
+      }
+
+      // Подготавливаем данные для отправки
+      const requestData = {
+        page: "edit",
+        mode: "update",
+        id_fact: selectedRequest.id_fact,
+        changes: changes,
+        telegram_id: telegramId,
+        initData: initData,
+        telegram_user: telegramUser ? {
+          id: telegramUser.id,
+          first_name: telegramUser.first_name,
+          last_name: telegramUser.last_name,
+          username: telegramUser.username,
+          language_code: telegramUser.language_code,
+          is_premium: telegramUser.is_premium,
+          photo_url: telegramUser.photo_url
+        } : null,
+        timestamp: new Date().toISOString()
+      };
+
+      console.log('📤 Отправляем изменения:', requestData);
+
+      const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('📦 Ответ от n8n:', data);
+
+      if (data.success) {
+        toast.success('Изменения успешно сохранены');
+        setChanges({}); // Очищаем изменения
+        setTimeout(() => setSelectedRequest(null), 500); // Возвращаемся к списку
+      } else {
+        throw new Error(data.message || 'Неизвестная ошибка');
+      }
+
+    } catch (error) {
+      console.error('❌ Ошибка отправки изменений:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
+      toast.error(`Ошибка сохранения: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Если не выбрана конкретная заявка, показываем список
   if (!selectedRequest) {
     return (
@@ -275,7 +357,30 @@ function EditPageContent() {
                       <div>
                         <div className="font-medium text-foreground text-sm">{request.object_name}</div>
                         <div className="text-xs text-muted-foreground">
-                          {new Date(request.delivery_datetime).toLocaleDateString('ru-RU')} • {request.object_address}
+                        {(() => {
+                          const date = new Date(request.delivery_datetime);
+                          const hours = date.getHours();
+                          const minutes = date.getMinutes();
+                          const showTime = hours !== 0 || minutes !== 0;
+                          
+                          return showTime 
+                            ? date.toLocaleDateString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })
+                            : date.toLocaleDateString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              });
+                        })()}
+                        <br />
+                        {request.object_address}
+                        <br />
+                        {request.order_number}
                         </div>
                       </div>
                     </div>
@@ -521,12 +626,17 @@ function EditPageContent() {
           </Button>
           <Button
             className="flex-1 h-12 bg-black hover:bg-gray-800 text-white"
-            onClick={() => {
-              toast.success('Изменения сохранены');
-              setTimeout(() => router.push('/'), 500);
-            }}
+            onClick={submitChanges}
+            disabled={isSubmitting || Object.keys(changes).length === 0}
           >
-            Отправить
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                Отправка...
+              </>
+            ) : (
+              `Отправить${Object.keys(changes).length > 0 ? ` (${Object.keys(changes).length})` : ''}`
+            )}
           </Button>
         </div>
       </div>
