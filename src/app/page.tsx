@@ -328,9 +328,9 @@ export default function Home() {
           </div>
           
           {/* Right column - Add button */}
-          <div className="flex items-start">
-            <Link href="/request" className="w-full">
-              <Button className="w-full h-24 bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl">
+          <div>
+            <Link href="/request">
+              <Button className="w-full h-full bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl min-h-24">
                 <div className="absolute top-4 left-4 text-left">
                   <div className="text-lg font-bold leading-tight">Добавить</div>
                   <div className="text-lg font-bold leading-tight">заявку</div>
