@@ -304,14 +304,16 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3">
           {/* Left column - 2 buttons */}
           <div className="space-y-3">
-            <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
-              <div className="flex flex-col items-start justify-start w-full h-full">
-                <div className="text-left">
-                  <div className="text-lg font-bold text-gray-900">Все заявки</div>
-                  <div className="text-sm text-gray-500 mt-1">Посмотреть статистику</div>
+            <Link href="/analytics">
+              <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
+                <div className="flex flex-col items-start justify-start w-full h-full">
+                  <div className="text-left">
+                    <div className="text-lg font-bold text-gray-900">Все заявки</div>
+                    <div className="text-sm text-gray-500 mt-1">Посмотреть статистику</div>
+                  </div>
                 </div>
-              </div>
-            </Button>
+              </Button>
+            </Link>
             <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
               <div className="flex flex-col items-start justify-start w-full h-full">
                 <div className="text-left">
@@ -326,9 +328,9 @@ export default function Home() {
           </div>
           
           {/* Right column - Add button */}
-          <div>
-            <Link href="/request">
-              <Button className="w-full h-full bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl min-h-24">
+          <div className="flex items-start">
+            <Link href="/request" className="w-full">
+              <Button className="w-full h-24 bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl">
                 <div className="absolute top-4 left-4 text-left">
                   <div className="text-lg font-bold leading-tight">Добавить</div>
                   <div className="text-lg font-bold leading-tight">заявку</div>
