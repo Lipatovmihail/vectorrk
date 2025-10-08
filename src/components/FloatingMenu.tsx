@@ -7,6 +7,11 @@ import { usePathname } from "next/navigation";
 export default function FloatingMenu() {
   const pathname = usePathname();
 
+  // Скрываем меню на странице создания заявки
+  if (pathname === "/request") {
+    return null;
+  }
+
   const menuItems = [
     {
       href: "/",

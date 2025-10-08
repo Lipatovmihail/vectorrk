@@ -10,46 +10,22 @@ import { Suspense } from "react";
 // Mock data для демонстрации
 const mockRequests = [
   {
-    id: 1,
-    object_name: "ЖК \"Солнечный\"",
-    order_number: "НЗ 545/204",
-    object_address: "ул. Солнечная, 15",
-    delivery_datetime: "2024-12-20 14:00:00",
-    status: "В работе",
-    step1: { object_name: "ЖК \"Солнечный\"", object_address: "ул. Солнечная, 15" },
-    step2: { materials: "1. Страховочная привязь – 2 шт;\n2. Страховочный ус – 2 шт;\n3. Жилетка – 2 шт;\n4. Перчатки х/б – 20 пар;\n5. Перчатки зимние – 4 пары;\n6. Перчатки прорезиненные – 10 пар;" },
-    step3: { delivery_date: "2024-12-20", delivery_time: "14:00" },
-    step4: { contact_name: "Иванов Иван Иванович", contact_phone: "+7 (900) 123-45-67" },
-    step5: { additional_info: "Доставить к 13:00, разгрузка с торца здания.\nТребуется предварительный звонок за 30 минут." },
-    step6: { photos: [] }
-  },
-  {
-    id: 2,
-    object_name: "Офисный центр",
-    order_number: "НЗ 546/205",
-    object_address: "пр. Центральный, 10",
-    delivery_datetime: "2024-12-18 10:00:00",
-    status: "Готова",
-    step1: { object_name: "Офисный центр", object_address: "пр. Центральный, 10" },
-    step2: { materials: "1. Офисная мебель – 5 комплектов;\n2. Компьютеры – 10 шт;\n3. Кабели и провода – 50 м;\n4. Сетевое оборудование – 3 шт." },
-    step3: { delivery_date: "2024-12-18", delivery_time: "10:00" },
-    step4: { contact_name: "Петров Петр Петрович", contact_phone: "+7 (900) 765-43-21" },
-    step5: { additional_info: "Поднять на 5 этаж, лифт работает.\nДоступ через центральный вход." },
-    step6: { photos: [] }
-  },
-  {
-    id: 3,
-    object_name: "Школа №15",
-    order_number: "НЗ 547/206",
-    object_address: "ул. Школьная, 5",
-    delivery_datetime: "2024-12-22 16:00:00",
+    id_fact: 29,
+    object_name: "Изготовление и монтаж ворот",
+    order_number: "НЗ 562/2024",
+    object_address: "Зайцева",
+    delivery_datetime: "2024-10-31 12:44:00",
     status: "Создана",
-    step1: { object_name: "Школа №15", object_address: "ул. Школьная, 5" },
-    step2: { materials: "1. Учебники математика – 100 шт;\n2. Учебники русский язык – 100 шт;\n3. Доски учебные – 3 шт;\n4. Мел – 50 упаковок;\n5. Канцелярия – 20 комплектов." },
-    step3: { delivery_date: "2024-12-22", delivery_time: "16:00" },
-    step4: { contact_name: "Сидорова Анна Сергеевна", contact_phone: "+7 (900) 111-22-33" },
-    step5: { additional_info: "Доставить после 15:00.\nОбязательна разгрузка через боковой вход.\nТребуется помощь грузчиков." },
-    step6: { photos: [] }
+    materials: "Материалы\n1. Щит (2050400012) - 1 шт, 2. Шина \"N\" (2054303805) - 2 шт, Автоматический выключатель 3-х полюсной 20 А, Кабель 5*2,5 мм (50 метров), Гофрированный металлорукав со склада (по метражу кабеля), крепеж металлорукава (шаг 500 мм, по метражу кабеля)."
+  },
+  {
+    id_fact: 3,
+    object_name: "ТГК-1",
+    order_number: "НЗ 58",
+    object_address: "Мазутный резервуар",
+    delivery_datetime: "2024-10-25 12:16:00",
+    status: "Создана",
+    materials: "Лист ГК толщина 4 мм, размер 6*1,5 метра, 15 тонн, для экономии доставка партиями, кратно листам, а не тоннам."
   }
 ];
 
@@ -59,35 +35,25 @@ function EditPageContent() {
   const requestId = searchParams.get('id');
 
   const [selectedRequest, setSelectedRequest] = React.useState<{
-    id: number;
+    id_fact: number;
     object_name: string;
     order_number: string;
     object_address: string;
     delivery_datetime: string;
     status: string;
-    step1: { object_name: string; object_address: string };
-    step2: { materials: string };
-    step3: { delivery_date: string; delivery_time: string };
-    step4: { contact_name: string; contact_phone: string };
-    step5: { additional_info: string };
-    step6: { photos: string[] };
+    materials: string;
   } | null>(null);
   const [editingField, setEditingField] = React.useState<string | null>(null);
   const [editedValue, setEditedValue] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState(true);
   const [editRequests, setEditRequests] = React.useState<Array<{
-    id: number;
+    id_fact: number;
     object_name: string;
     order_number: string;
     object_address: string;
     delivery_datetime: string;
     status: string;
-    step1: { object_name: string; object_address: string };
-    step2: { materials: string };
-    step3: { delivery_date: string; delivery_time: string };
-    step4: { contact_name: string; contact_phone: string };
-    step5: { additional_info: string };
-    step6: { photos: string[] };
+    materials: string;
   }>>([]);
 
   // Принудительное разворачивание на фулскрин
@@ -106,7 +72,7 @@ function EditPageContent() {
 
   React.useEffect(() => {
     if (requestId) {
-      const request = editRequests.find(r => r.id === parseInt(requestId));
+      const request = editRequests.find(r => r.id_fact === parseInt(requestId));
       setSelectedRequest(request || null);
     }
   }, [requestId, editRequests]);
@@ -163,8 +129,8 @@ function EditPageContent() {
       console.log('📦 Получены данные заявок для редактирования:', data);
 
       // Обрабатываем ответ от n8n
-      if (data.success && data.requests) {
-        setEditRequests(data.requests);
+      if (data.success && data.data && Array.isArray(data.data)) {
+        setEditRequests(data.data);
       } else {
         console.log('⚠️ Неожиданный формат ответа, используем mock данные');
         setEditRequests(mockRequests);
@@ -200,22 +166,13 @@ function EditPageContent() {
         currentValue = selectedRequest.object_address;
         break;
       case 'materials':
-        currentValue = selectedRequest.step2?.materials || '';
+        currentValue = selectedRequest.materials || '';
         break;
       case 'delivery_date':
         currentValue = selectedRequest.delivery_datetime.split(' ')[0];
         break;
       case 'delivery_time':
         currentValue = selectedRequest.delivery_datetime.includes(' 00:00:00') ? '' : selectedRequest.delivery_datetime.split(' ')[1]?.slice(0, 5) || '';
-        break;
-      case 'contact_name':
-        currentValue = selectedRequest.step4?.contact_name || '';
-        break;
-      case 'contact_phone':
-        currentValue = selectedRequest.step4?.contact_phone || '';
-        break;
-      case 'additional_info':
-        currentValue = selectedRequest.step5?.additional_info || '';
         break;
       default:
         break;
@@ -236,33 +193,20 @@ function EditPageContent() {
         break;
       case 'object_name':
         updatedRequest.object_name = newValue;
-        updatedRequest.step1.object_name = newValue;
         break;
       case 'object_address':
         updatedRequest.object_address = newValue;
-        updatedRequest.step1.object_address = newValue;
         break;
       case 'materials':
-        updatedRequest.step2.materials = newValue;
+        updatedRequest.materials = newValue;
         break;
       case 'delivery_date':
-        updatedRequest.step3.delivery_date = newValue;
         // Also update delivery_datetime
         updatedRequest.delivery_datetime = `${newValue} ${updatedRequest.delivery_datetime.split(' ')[1]}`;
         break;
       case 'delivery_time':
-        updatedRequest.step3.delivery_time = newValue;
         // Also update delivery_datetime
         updatedRequest.delivery_datetime = `${updatedRequest.delivery_datetime.split(' ')[0]} ${newValue}:00`;
-        break;
-      case 'contact_name':
-        updatedRequest.step4.contact_name = newValue;
-        break;
-      case 'contact_phone':
-        updatedRequest.step4.contact_phone = newValue;
-        break;
-      case 'additional_info':
-        updatedRequest.step5.additional_info = newValue;
         break;
       default:
         break;
@@ -276,10 +220,7 @@ function EditPageContent() {
       'object_address': 'Адрес объекта',
       'materials': 'Материалы',
       'delivery_date': 'Дата поставки',
-      'delivery_time': 'Время поставки',
-      'contact_name': 'Контактное лицо',
-      'contact_phone': 'Телефон',
-      'additional_info': 'Дополнительная информация'
+      'delivery_time': 'Время поставки'
     };
 
     toast.success(`${fieldNames[field]} изменен`);
@@ -321,7 +262,7 @@ function EditPageContent() {
               <div className="space-y-1">
                 {editRequests.map((request) => (
                 <div
-                  key={request.id}
+                  key={request.id_fact}
                   className="p-2 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => setSelectedRequest(request)}
                 >
@@ -537,7 +478,7 @@ function EditPageContent() {
             {editingField === 'materials' ? (
               <div className="flex items-start gap-2">
                 <textarea
-                  defaultValue={selectedRequest.step2?.materials || "Не указано"}
+                  defaultValue={selectedRequest.materials || "Не указано"}
                   className="flex-1 px-3 py-2 border rounded-md bg-gray-50 min-h-[120px]"
                   autoFocus
                   onChange={(e) => setEditedValue(e.target.value)}
@@ -554,10 +495,10 @@ function EditPageContent() {
             ) : (
               <div 
                 className="px-3 py-2 bg-gray-50 border rounded-md cursor-pointer hover:bg-gray-100 min-h-[120px] flex items-start"
-                onClick={() => startEditing('materials', selectedRequest.step2?.materials || "Не указано")}
+                onClick={() => startEditing('materials', selectedRequest.materials || "Не указано")}
               >
                 <p className="font-medium whitespace-pre-line">
-                  {selectedRequest.step2?.materials || "Не указано"}
+                  {selectedRequest.materials || "Не указано"}
                 </p>
               </div>
             )}
