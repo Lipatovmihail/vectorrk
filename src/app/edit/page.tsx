@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, X } from "lucide-react";
+import { Check, X, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Suspense } from "react";
@@ -74,6 +74,21 @@ function EditPageContent() {
   } | null>(null);
   const [editingField, setEditingField] = React.useState<string | null>(null);
   const [editedValue, setEditedValue] = React.useState<string>('');
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [editRequests, setEditRequests] = React.useState<Array<{
+    id: number;
+    object_name: string;
+    order_number: string;
+    object_address: string;
+    delivery_datetime: string;
+    status: string;
+    step1: { object_name: string; object_address: string };
+    step2: { materials: string };
+    step3: { delivery_date: string; delivery_time: string };
+    step4: { contact_name: string; contact_phone: string };
+    step5: { additional_info: string };
+    step6: { photos: string[] };
+  }>>([]);
 
   // Принудительное разворачивание на фулскрин
   React.useEffect(() => {
@@ -84,12 +99,85 @@ function EditPageContent() {
     }
   }, []);
 
+  // Загружаем данные заявок для редактирования
+  React.useEffect(() => {
+    loadEditRequestsData();
+  }, []);
+
   React.useEffect(() => {
     if (requestId) {
-      const request = mockRequests.find(r => r.id === parseInt(requestId));
+      const request = editRequests.find(r => r.id === parseInt(requestId));
       setSelectedRequest(request || null);
     }
-  }, [requestId]);
+  }, [requestId, editRequests]);
+
+  // Функция загрузки данных заявок для редактирования
+  const loadEditRequestsData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Получаем данные пользователя из Telegram
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      const initData = window.Telegram?.WebApp?.initData;
+      const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      
+      if (!telegramId) {
+        console.log('⚠️ Telegram WebApp не обнаружен, используем mock данные');
+        // Fallback для локального тестирования
+        setEditRequests(mockRequests);
+        setIsLoading(false);
+        return;
+      }
+
+      // Отправляем запрос к n8n для получения данных заявок для редактирования
+      const requestData = {
+        page: "edit",
+        mode: "editlist",
+        telegram_id: telegramId,
+        initData: initData,
+        telegram_user: telegramUser ? {
+          id: telegramUser.id,
+          first_name: telegramUser.first_name,
+          last_name: telegramUser.last_name,
+          username: telegramUser.username,
+          language_code: telegramUser.language_code,
+          is_premium: telegramUser.is_premium,
+          photo_url: telegramUser.photo_url
+        } : null,
+        timestamp: new Date().toISOString()
+      };
+
+      console.log('📤 Отправляем запрос на загрузку заявок для редактирования:', requestData);
+
+      const response = await fetch("https://n8nunit.miaai.ru/webhook/f760ae2e-d95f-4f48-9134-c60aa408372b", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('📦 Получены данные заявок для редактирования:', data);
+
+      // Обрабатываем ответ от n8n
+      if (data.success && data.requests) {
+        setEditRequests(data.requests);
+      } else {
+        console.log('⚠️ Неожиданный формат ответа, используем mock данные');
+        setEditRequests(mockRequests);
+      }
+
+    } catch (error) {
+      console.error('❌ Ошибка загрузки заявок для редактирования:', error);
+      // В случае ошибки используем mock данные
+      setEditRequests(mockRequests);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const startEditing = (field: string, currentValue: string) => {
     setEditingField(field);
@@ -217,38 +305,52 @@ function EditPageContent() {
 
         {/* Список заявок */}
         <div className="px-4 py-2">
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold">Выберите заявку для редактирования</h2>
-            <p className="text-xs text-muted-foreground mt-1">Нажмите на заявку, чтобы начать редактирование</p>
-          </div>
+          <div className="rounded-2xl p-4" style={{backgroundColor: '#f8f9fa'}}>
+            <h2 className="text-lg font-semibold text-foreground mb-1">Выберите заявку для редактирования</h2>
+            <p className="text-xs text-muted-foreground mb-3 leading-tight">
+              Нажмите на заявку, чтобы начать редактирование
+            </p>
 
-          <div className="space-y-3">
-            {mockRequests.map((request) => (
-              <div
-                key={request.id}
-                className="p-4 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => setSelectedRequest(request)}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-lg">{request.object_name}</h3>
-                    <p className="text-sm text-gray-600">{request.order_number}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(request.delivery_datetime).toLocaleDateString('ru-RU')} • {request.object_address}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      request.status === 'Готова' ? 'bg-green-100 text-green-800' :
-                      request.status === 'В работе' ? 'bg-orange-100 text-orange-800' :
-                      'bg-blue-100 text-blue-800'
-                    }`}>
-                      {request.status}
-                    </span>
+            {/* Экран загрузки */}
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full mb-3"></div>
+                <p className="text-sm text-muted-foreground">Загрузка заявок...</p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {editRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="p-2 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => setSelectedRequest(request)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-5 h-5 bg-muted rounded-md flex items-center justify-center">
+                        <Package className="h-2.5 w-2.5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground text-sm">{request.object_name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(request.delivery_datetime).toLocaleDateString('ru-RU')} • {request.object_address}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                        request.status === 'Готова' ? 'bg-green-100 text-green-800' :
+                        request.status === 'В работе' ? 'bg-orange-100 text-orange-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {request.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
