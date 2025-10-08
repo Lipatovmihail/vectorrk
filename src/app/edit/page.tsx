@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -57,7 +57,20 @@ export default function EditPage() {
   const searchParams = useSearchParams();
   const requestId = searchParams.get('id');
 
-  const [selectedRequest, setSelectedRequest] = React.useState<any | null>(null);
+  const [selectedRequest, setSelectedRequest] = React.useState<{
+    id: number;
+    object_name: string;
+    order_number: string;
+    object_address: string;
+    delivery_datetime: string;
+    status: string;
+    step1: { object_name: string; object_address: string };
+    step2: { materials: string };
+    step3: { delivery_date: string; delivery_time: string };
+    step4: { contact_name: string; contact_phone: string };
+    step5: { additional_info: string };
+    step6: { photos: string[] };
+  } | null>(null);
   const [editingField, setEditingField] = React.useState<string | null>(null);
   const [editedValue, setEditedValue] = React.useState<string>('');
 
@@ -118,7 +131,7 @@ export default function EditPage() {
     }
 
     // Обновляем данные
-    let updatedRequest = { ...selectedRequest };
+    const updatedRequest = { ...selectedRequest };
     switch (field) {
       case 'order_number':
         updatedRequest.order_number = newValue;
