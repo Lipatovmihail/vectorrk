@@ -8,138 +8,16 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1068ms
- ○ Compiling / ...
- ✓ Compiled / in 2.6s
- GET / 200 in 3013ms
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
- GET / 200 in 547ms
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
- ○ Compiling /favicon.ico ...
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 1685ms
- ✓ Compiled /favicon.ico in 3.1s
- GET /analytics 200 in 2986ms
- GET /analytics 200 in 198ms
- GET /analytics 200 in 57ms
- GET /analytics 200 in 87ms
- GET /analytics 200 in 40ms
- GET / 200 in 96ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 324ms
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
- GET /analytics 200 in 104ms
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
- ✓ Compiled in 360ms
- ✓ Compiled in 183ms
- ✓ Compiled /analytics in 121ms
- GET /analytics 200 in 456ms
- ✓ Compiled in 278ms
- ✓ Compiled in 472ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /analytics 200 in 1026ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 900ms
- ✓ Compiled in 151ms
- ✓ Compiled in 141ms
- ✓ Compiled in 265ms
- GET /favicon.ico 200 in 437ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 196ms
- ⨯ ReferenceError: React is not defined
-    at AnalyticsPage (src/app/analytics/page.tsx:69:25)
-  67 |
-  68 | export default function AnalyticsPage() {
-> 69 |   const totalVisitors = React.useMemo(() => {
-     |                         ^
-  70 |     return pieChartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  71 |   }, [])
-  72 | {
-  digest: '2917984070'
-}
- GET /analytics 500 in 469ms
- GET /favicon.ico 200 in 592ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 311ms
- GET /analytics 200 in 869ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 521ms
- ✓ Compiled in 393ms
- ✓ Compiled in 152ms
- ✓ Compiled in 181ms
- ✓ Compiled in 138ms
- GET /analytics 200 in 1002ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 719ms
- ✓ Compiled in 259ms
- GET /analytics 200 in 1272ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 1093ms
- ✓ Compiled in 157ms
- GET /analytics 200 in 1324ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 1317ms
- ✓ Compiled in 184ms
- ✓ Compiled in 105ms
- ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
-   ▲ Next.js 15.5.4 (Turbopack)
-   - Local:        http://localhost:3000
-   - Network:      http://10.242.29.78:3000
-   - Environments: .env.local
-
- ✓ Starting...
- ✓ Ready in 2.1s
+ ✓ Ready in 2.6s
  ○ Compiling /analytics ...
- ✓ Compiled /analytics in 6.1s
- GET /analytics 200 in 6535ms
+ ✓ Compiled /analytics in 4.5s
+ GET /analytics 200 in 5017ms
  ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 4.4s
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 4764ms
- ✓ Compiled in 322ms
- ✓ Compiled in 292ms
- ✓ Compiled in 181ms
- ✓ Compiled in 196ms
- ✓ Compiled in 174ms
- ✓ Compiled in 107ms
- ✓ Compiled in 106ms
- ✓ Compiled in 130ms
- ✓ Compiled in 394ms
- ✓ Compiled in 141ms
- ✓ Compiled in 259ms
- ✓ Compiled in 105ms
- ✓ Compiled in 1306ms
- ✓ Compiled /analytics in 41ms
- GET /analytics 200 in 189ms
- ✓ Compiled in 310ms
- ✓ Compiled in 179ms
- GET /analytics 200 in 548ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 553ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 311ms
+ ✓ Compiled /favicon.ico in 673ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 1126ms
  ○ Compiling / ...
- ✓ Compiled / in 1776ms
- GET / 200 in 1945ms
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
- GET /analytics 200 in 632ms
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
- GET / 200 in 93ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 273ms
+ ✓ Compiled / in 1339ms
+ GET / 200 in 1499ms
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
@@ -149,131 +27,29 @@
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
- ✓ Compiled in 326ms
- ✓ Compiled in 175ms
- GET / 200 in 1959ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 352ms
+ ✓ Compiled in 386ms
+ GET / 200 in 343ms
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
- ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 394ms
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
- GET /analytics 200 in 126ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 597ms
- ✓ Compiled in 339ms
- ✓ Compiled in 215ms
- GET /analytics 200 in 988ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 726ms
- ✓ Compiled in 153ms
- ✓ Compiled in 107ms
- GET /analytics 200 in 901ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 363ms
- ✓ Compiled in 176ms
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
-}
- ○ Compiling /_error ...
- ✓ Compiled /_error in 4.9s
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.dy0n9b3y0d'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.dy0n9b3y0d'
-}
-[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.dp3rd6wrkj'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.dp3rd6wrkj'
-}
-[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.vh8r8cfkvrn'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.vh8r8cfkvrn'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1oadn17f4z6'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1oadn17f4z6'
-}
-[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/page/app-build-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.avrgzgs7fg4'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.avrgzgs7fg4'
-}
-[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.r694qvrba2'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.r694qvrba2'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/analytics/page/app-build-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/analytics/page/app-build-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.p90xdlbmvhj'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.p90xdlbmvhj'
-}
-[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/analytics/page/app-build-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/analytics/page/app-build-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.l9fm0u0nb1l'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.l9fm0u0nb1l'
-}
-[Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1kad1gvvrk4'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/static/development/_buildManifest.js.tmp.1kad1gvvrk4'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
-}
+ GET / 200 in 763ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 303ms
+ ✓ Compiled in 192ms
+ ✓ Compiled in 162ms
+ ✓ Compiled in 194ms

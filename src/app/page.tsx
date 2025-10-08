@@ -303,9 +303,9 @@ export default function Home() {
       <div className="px-4 py-4">
         <div className="grid grid-cols-2 gap-3">
           {/* Left column - 2 buttons */}
-          <div className="space-y-3">
+          <div>
             <Link href="/analytics">
-              <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
+              <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3 mb-3">
                 <div className="flex flex-col items-start justify-start w-full h-full">
                   <div className="text-left">
                     <div className="text-lg font-bold text-gray-900">Все заявки</div>
@@ -330,7 +330,7 @@ export default function Home() {
           {/* Right column - Add button */}
           <div>
             <Link href="/request">
-              <Button className="w-full h-full bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl min-h-24">
+              <Button className="w-full h-[204px] bg-black hover:bg-gray-800 text-white text-base font-semibold relative p-6 rounded-2xl">
                 <div className="absolute top-4 left-4 text-left">
                   <div className="text-lg font-bold leading-tight">Добавить</div>
                   <div className="text-lg font-bold leading-tight">заявку</div>
