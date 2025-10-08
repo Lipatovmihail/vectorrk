@@ -75,6 +75,15 @@ function EditPageContent() {
   const [editingField, setEditingField] = React.useState<string | null>(null);
   const [editedValue, setEditedValue] = React.useState<string>('');
 
+  // Принудительное разворачивание на фулскрин
+  React.useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.expand();
+      window.Telegram.WebApp.MainButton.hide();
+      window.Telegram.WebApp.enableClosingConfirmation();
+    }
+  }, []);
+
   React.useEffect(() => {
     if (requestId) {
       const request = mockRequests.find(r => r.id === parseInt(requestId));

@@ -143,6 +143,15 @@ export default function RequestPage() {
     isAdmin: false
   })
 
+  // Принудительное разворачивание на фулскрин
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.expand();
+      window.Telegram.WebApp.MainButton.hide();
+      window.Telegram.WebApp.enableClosingConfirmation();
+    }
+  }, []);
+
   // Инициализация Telegram WebApp (как в sellerkit)
   useEffect(() => {
     const initTelegramWebApp = async () => {

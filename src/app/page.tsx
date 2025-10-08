@@ -41,6 +41,20 @@ export default function Home() {
     loadRequestsData();
   }, []);
 
+  // Принудительное разворачивание на фулскрин
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      // Принудительно разворачиваем на весь экран
+      window.Telegram.WebApp.expand();
+      
+      // Скрываем кнопку "Закрыть" если нужно
+      window.Telegram.WebApp.MainButton.hide();
+      
+      // Устанавливаем фулскрин режим
+      window.Telegram.WebApp.enableClosingConfirmation();
+    }
+  }, []);
+
   // Функция загрузки данных заявок
   const loadRequestsData = async () => {
     try {
