@@ -131,7 +131,7 @@ export default function Home() {
         return true
       })
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-1">
         <div className="text-center pt-safe pt-12">
@@ -314,17 +314,19 @@ export default function Home() {
                 </div>
               </Button>
             </Link>
-            <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
-              <div className="flex flex-col items-start justify-start w-full h-full">
-                <div className="text-left">
-                  <div className="text-lg font-bold text-gray-900">Править</div>
-                  <div className="text-sm text-gray-500 mt-1">Внести изменения</div>
+            <Link href="/edit">
+              <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
+                <div className="flex flex-col items-start justify-start w-full h-full">
+                  <div className="text-left">
+                    <div className="text-lg font-bold text-gray-900">Править</div>
+                    <div className="text-sm text-gray-500 mt-1">Внести изменения</div>
+                  </div>
+                  <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {editableCount}
+                  </div>
                 </div>
-                <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {editableCount}
-                </div>
-              </div>
-            </Button>
+              </Button>
+            </Link>
           </div>
           
           {/* Right column - Add button */}
@@ -423,16 +425,17 @@ export default function Home() {
         </div>
         <div className="space-y-1">
           {filteredRequests.map((request) => (
-            <Card key={request.id}>
-              <CardContent className="p-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-5 h-5 bg-muted rounded-md flex items-center justify-center">
-                      <Package className="h-2.5 w-2.5 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground text-sm">{request.object_name}</div>
-                      <div className="text-xs text-muted-foreground">
+            <Link key={request.id} href={`/edit?id=${request.id}`}>
+              <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+                <CardContent className="p-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-5 h-5 bg-muted rounded-md flex items-center justify-center">
+                        <Package className="h-2.5 w-2.5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground text-sm">{request.object_name}</div>
+                        <div className="text-xs text-muted-foreground">
                         {(() => {
                           const date = new Date(request.delivery_datetime);
                           const hours = date.getHours();
@@ -473,6 +476,7 @@ export default function Home() {
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
             </>

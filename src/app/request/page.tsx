@@ -582,33 +582,33 @@ export default function RequestPage() {
   const handleTelegramPhotoUpload = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
       if (typeof window.Telegram.WebApp.showPopup === 'function') {
-        window.Telegram.WebApp.showPopup({
-          title: 'Выберите фото',
-          message: 'Выберите фотографии для заявки',
-          buttons: [
+      window.Telegram.WebApp.showPopup({
+        title: 'Выберите фото',
+        message: 'Выберите фотографии для заявки',
+        buttons: [
             { id: 'camera', type: 'default', text: 'Камера' },
             { id: 'gallery', type: 'default', text: 'Галерея' },
             { id: 'cancel', type: 'cancel', text: 'Отмена' }
-          ]
-        }, (buttonId) => {
-          if (buttonId === 'camera' || buttonId === 'gallery') {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.multiple = true;
-            input.accept = 'image/*';
-            input.onchange = (e) => {
-              const files = (e.target as HTMLInputElement).files;
+        ]
+      }, (buttonId) => {
+        if (buttonId === 'camera' || buttonId === 'gallery') {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.multiple = true;
+          input.accept = 'image/*';
+          input.onchange = (e) => {
+            const files = (e.target as HTMLInputElement).files;
               if (files) processFilesAndUpload(files); // ← КЛЮЧЕВОЕ
-            };
-            input.click();
-          }
-        });
+          };
+          input.click();
+        }
+      });
         return;
       }
     }
     // Fallback: обычный инпут
-    const input = document.getElementById('photo-upload') as HTMLInputElement;
-    input?.click();
+      const input = document.getElementById('photo-upload') as HTMLInputElement;
+      input?.click();
   };
 
   const removePhoto = (index: number) => {
@@ -685,7 +685,7 @@ export default function RequestPage() {
                     {formData.photos.map((photo, index) => {
                       const progress = uploadProgress[index];
                       return (
-                        <div key={index} className="relative">
+                      <div key={index} className="relative">
                         <Image
                           src={photo}
                           alt={`Фото ${index + 1}`}
@@ -702,20 +702,20 @@ export default function RequestPage() {
                                   <div>
                                     <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
                                     <div>Сжатие...</div>
-                                  </div>
+                      </div>
                                 )}
                                 {progress.status === 'uploading' && (
                                   <div>
                                     <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto mb-1"></div>
                                     <div>Загрузка...</div>
-                                  </div>
+                  </div>
                                 )}
                                 {progress.status === 'error' && (
                                   <div className="text-red-300">
                                     <div>❌</div>
                                     <div className="text-xs">Ошибка</div>
-                                  </div>
-                                )}
+                </div>
+              )}
                               </div>
                             </div>
                           )}
@@ -738,7 +738,7 @@ export default function RequestPage() {
                 disabled={isUploading}
               >
                 Править
-              </Button>
+            </Button>
             )}
             <Button 
               className={`flex-1 h-12 text-sm ${(isUploading || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -757,8 +757,8 @@ export default function RequestPage() {
                 </div>
               ) : (
                 <>
-                  <Check className="h-4 w-4 mr-2" />
-                  Отправить заявку
+              <Check className="h-4 w-4 mr-2" />
+              Отправить заявку
                 </>
               )}
             </Button>
@@ -771,7 +771,7 @@ export default function RequestPage() {
   const currentStepData = steps[currentStep - 1]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-background border-b border-border px-4 py-8 pt-safe">
         <div className="flex items-center justify-center relative">
@@ -808,59 +808,59 @@ export default function RequestPage() {
           </div>
           <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
           <p className="text-xs text-muted-foreground mt-1 leading-tight">
-            {currentStep === 6
+              {currentStep === 6 
               ? "Добавьте фото при необходимости"
-              : currentStep === 5
-              ? "Укажите необходимые материалы списком"
-              : `Например, "${currentStepData.placeholder}"`
-            }
-          </p>
+                : currentStep === 5
+                ? "Укажите необходимые материалы списком"
+                : `Например, "${currentStepData.placeholder}"`
+              }
+            </p>
         </div>
         <div>
-          {currentStep === 4 ? (
+            {currentStep === 4 ? (
             <div className="space-y-4 min-h-[150px] flex flex-col">
             <div className="flex gap-4">
               <div className="flex-1">
-                <Label className="text-sm font-medium mb-2 block">Выберите дату</Label>
-                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
+                  <Label className="text-sm font-medium mb-2 block">Выберите дату</Label>
+                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
                       className="w-full justify-start text-left font-normal h-12"
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {formData.deliveryDate ? (
-                        format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })
-                      ) : (
-                        <span>Выберите дату</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {formData.deliveryDate ? (
+                          format(formData.deliveryDate, "dd.MM.yyyy", { locale: ru })
+                        ) : (
+                          <span>Выберите дату</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start" sideOffset={5}>
-                    <CalendarComponent
-                      mode="single"
-                      selected={formData.deliveryDate || undefined}
-                      onSelect={(date) => {
-                        setFormData(prev => ({ ...prev, deliveryDate: date || null }))
-                        setCalendarOpen(false)
-                      }}
-                      initialFocus
-                      locale={ru}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+                      <CalendarComponent
+                        mode="single"
+                        selected={formData.deliveryDate || undefined}
+                        onSelect={(date) => {
+                          setFormData(prev => ({ ...prev, deliveryDate: date || null }))
+                          setCalendarOpen(false)
+                        }}
+                        initialFocus
+                        locale={ru}
+                      />
+                    </PopoverContent>
+                  </Popover>
+            </div>
               <div className="flex-1">
                 <Label className="text-sm font-medium mb-2 block text-muted-foreground">Время (необязательно)</Label>
-                <Input 
-                  type="time"
-                  placeholder="16:10"
-                  value={formData.deliveryTime}
-                  onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
-                  onKeyPress={handleKeyPress}
+              <Input 
+                      type="time"
+                      placeholder="16:10"
+                      value={formData.deliveryTime}
+                      onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                      onKeyPress={handleKeyPress}
                   className="h-12"
-                />
-              </div>
+              />
+            </div>
             </div>
             </div>
             ) : currentStep === 5 ? (
@@ -880,21 +880,21 @@ export default function RequestPage() {
                     {formData.photos.length === 0 ? (
                       // Показываем приветствие только если нет фото
                       <div className="text-center">
-                        <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-600 mb-4">Добавьте фотографии</p>
-                      </div>
+                  <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-4">Добавьте фотографии</p>
+                </div>
                     ) : (
                       // Показываем фото в сетке
                       <div className="grid grid-cols-3 gap-3 mb-4">
                       {formData.photos.map((photo, index) => {
                         const progress = uploadProgress[index];
                         return (
-                          <div key={index} className="relative">
-                            <Image
-                              src={photo}
-                              alt={`Фото ${index + 1}`}
-                              width={100}
-                              height={100}
+                      <div key={index} className="relative">
+                        <Image
+                          src={photo}
+                          alt={`Фото ${index + 1}`}
+                          width={100}
+                          height={100}
                               className="rounded-lg object-cover w-24 h-24"
                             />
                             
@@ -924,19 +924,19 @@ export default function RequestPage() {
                               </div>
                             )}
                             
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
-                              onClick={() => removePhoto(index)}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                          onClick={() => removePhoto(index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                    </div>
                         );
                       })}
-                    </div>
-                    )}
+                  </div>
+                )}
                   </div>
                   
                   {/* Кнопка загрузки всегда внизу */}
@@ -958,8 +958,8 @@ export default function RequestPage() {
                         <div className="flex items-center gap-2">
                           <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
                           Загрузка...
-                        </div>
-                      ) : (
+              </div>
+            ) : (
                         formData.photos.length === 0 ? "Выбрать фото" : "Добавить еще фото"
                       )}
                     </Button>
@@ -998,7 +998,7 @@ export default function RequestPage() {
               disabled={isUploading}
             >
               Назад
-            </Button>
+          </Button>
           )}
           <Button 
             className={`flex-1 h-12 text-sm ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Toaster } from "@/components/ui/sonner";
+import FloatingMenu from "@/components/FloatingMenu";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -34,6 +35,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         {children}
+        <FloatingMenu />
         <Toaster position="top-center" offset={60} />
       </body>
     </html>
