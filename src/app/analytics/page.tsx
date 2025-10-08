@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis, Label, Pie, PieChart, Legend } from "recharts"
+import { Bar, BarChart, XAxis, YAxis, Label, Pie, PieChart, Legend } from "recharts"
 
 import {
   Card,
@@ -67,7 +67,8 @@ const chartConfig = {
 interface AnalyticsData {
   success: boolean;
   barChartData: Array<{
-    month: string;
+    month: number;
+    year: number;
     created: number;
     completed: number;
   }>;
@@ -91,13 +92,64 @@ export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = React.useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  // Функция для преобразования данных от n8n в формат для графика
+  const transformBarChartData = (data: AnalyticsData['barChartData']) => {
+    const monthNames = [
+      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+    
+    return data.map(item => ({
+      month: monthNames[item.month - 1] || `Месяц ${item.month}`,
+      created: item.created,
+      completed: item.completed
+    }));
+  };
+
+  // Функция для вычисления периода
+  const getPeriodDescription = (data: AnalyticsData['barChartData']) => {
+    if (!data || data.length === 0) return "Январь - Июнь 2024";
+    
+    const monthNames = [
+      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+    
+    const firstMonth = monthNames[data[0].month - 1] || `Месяц ${data[0].month}`;
+    const lastMonth = monthNames[data[data.length - 1].month - 1] || `Месяц ${data[data.length - 1].month}`;
+    const year = data[0].year;
+    
+    return `${firstMonth} - ${lastMonth} ${year}`;
+  };
+
+  // Функция для добавления цветов к данным круговой диаграммы
+  const addColorsToPieData = (data: AnalyticsData['pieChartData']) => {
+    const colors = {
+      "Создана": "var(--color-chrome)",
+      "В работе": "var(--color-safari)", 
+      "Готова": "var(--color-firefox)"
+    };
+    
+    return data.map(item => ({
+      ...item,
+      fill: colors[item.browser as keyof typeof colors] || "var(--color-chrome)"
+    }));
+  };
+
   // Используем реальные данные или fallback на моковые
-  const currentBarChartData = analyticsData?.barChartData || chartData;
-  const currentPieChartData = analyticsData?.pieChartData || pieChartData;
+  const currentBarChartData = analyticsData?.barChartData 
+    ? transformBarChartData(analyticsData.barChartData) 
+    : chartData;
+  const currentPieChartData = analyticsData?.pieChartData 
+    ? addColorsToPieData(analyticsData.pieChartData)
+    : pieChartData;
   const currentAnalytics = analyticsData?.analytics || { 
     growthPercentage: 5.2, 
     periodDescription: "Показаны общие данные за последние 6 месяцев" 
   };
+  const periodDescription = analyticsData?.barChartData 
+    ? getPeriodDescription(analyticsData.barChartData)
+    : "Январь - Июнь 2024";
 
   const totalVisitors = React.useMemo(() => {
     return currentPieChartData.reduce((acc, curr) => {
@@ -199,7 +251,7 @@ export default function AnalyticsPage() {
             <Card className="bg-transparent border-0 shadow-none">
             <CardHeader>
               <CardTitle>Статистика заявок</CardTitle>
-              <CardDescription>Январь - Июнь 2024</CardDescription>
+              <CardDescription>{periodDescription}</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig}>
@@ -208,10 +260,10 @@ export default function AnalyticsPage() {
                   data={currentBarChartData}
                   layout="vertical"
                   margin={{
-                    right: 16,
+                    left: -20,
                   }}
                 >
-                  <CartesianGrid horizontal={false} />
+                  <XAxis type="number" dataKey="created" hide />
                   <YAxis
                     dataKey="month"
                     type="category"
@@ -219,34 +271,12 @@ export default function AnalyticsPage() {
                     tickMargin={10}
                     axisLine={false}
                     tickFormatter={(value) => value.slice(0, 3)}
-                    hide
                   />
-                  <XAxis dataKey="created" type="number" hide />
                   <ChartTooltip
                     cursor={false}
-                    content={<ChartTooltipContent indicator="line" />}
+                    content={<ChartTooltipContent hideLabel />}
                   />
-                  <Bar
-                    dataKey="created"
-                    layout="vertical"
-                    fill="var(--color-created)"
-                    radius={4}
-                  >
-                    <LabelList
-                      dataKey="month"
-                      position="insideLeft"
-                      offset={8}
-                      className="fill-(--color-label)"
-                      fontSize={12}
-                    />
-                    <LabelList
-                      dataKey="created"
-                      position="right"
-                      offset={8}
-                      className="fill-foreground"
-                      fontSize={12}
-                    />
-                  </Bar>
+                  <Bar dataKey="created" fill="var(--color-created)" radius={5} />
                 </BarChart>
               </ChartContainer>
             </CardContent>
