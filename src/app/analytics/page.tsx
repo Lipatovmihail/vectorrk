@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, XAxis, YAxis, Label, Pie, PieChart, Legend } from "recharts"
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, Label, Pie, PieChart, Legend } from "recharts"
 
 import {
   Card,
@@ -125,9 +125,9 @@ export default function AnalyticsPage() {
   // Функция для добавления цветов к данным круговой диаграммы
   const addColorsToPieData = (data: AnalyticsData['pieChartData']) => {
     const colors = {
-      "Создана": "var(--color-chrome)",
-      "В работе": "var(--color-safari)", 
-      "Готова": "var(--color-firefox)"
+      "Создана": "var(--color-firefox)", // Зеленый для "Создана"
+      "В работе": "var(--color-safari)", // Оранжевый для "В работе"
+      "Готова": "var(--color-chrome)"    // Синий для "Готова"
     };
     
     return data.map(item => ({
@@ -145,7 +145,7 @@ export default function AnalyticsPage() {
     : pieChartData;
   const currentAnalytics = analyticsData?.analytics || { 
     growthPercentage: 5.2, 
-    periodDescription: "Показаны общие данные за последние 6 месяцев" 
+    periodDescription: "Общие данные за 6 месяцев" 
   };
   const periodDescription = analyticsData?.barChartData 
     ? getPeriodDescription(analyticsData.barChartData)
@@ -231,8 +231,8 @@ export default function AnalyticsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-center pt-safe pt-12">
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-1">
+        <div className="text-center pt-safe pt-12">
           <h1 className="text-lg font-semibold">Аналитика</h1>
         </div>
       </div>
@@ -258,15 +258,13 @@ export default function AnalyticsPage() {
                 <BarChart
                   accessibilityLayer
                   data={currentBarChartData}
-                  layout="vertical"
                   margin={{
-                    left: -20,
+                    top: 20,
                   }}
                 >
-                  <XAxis type="number" dataKey="created" hide />
-                  <YAxis
+                  <CartesianGrid vertical={false} />
+                  <XAxis
                     dataKey="month"
-                    type="category"
                     tickLine={false}
                     tickMargin={10}
                     axisLine={false}
@@ -276,7 +274,14 @@ export default function AnalyticsPage() {
                     cursor={false}
                     content={<ChartTooltipContent hideLabel />}
                   />
-                  <Bar dataKey="created" fill="var(--color-created)" radius={5} />
+                  <Bar dataKey="created" fill="var(--color-created)" radius={8}>
+                    <LabelList
+                      position="top"
+                      offset={12}
+                      className="fill-foreground"
+                      fontSize={12}
+                    />
+                  </Bar>
                 </BarChart>
               </ChartContainer>
             </CardContent>
@@ -296,7 +301,7 @@ export default function AnalyticsPage() {
             <Card className="bg-transparent border-0 shadow-none flex flex-col">
               <CardHeader className="items-center pb-0">
                 <CardTitle>Распределение заявок</CardTitle>
-                <CardDescription>Январь - Июнь 2024</CardDescription>
+                <CardDescription>{periodDescription}</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 pb-0">
                 <ChartContainer
