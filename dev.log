@@ -259,3 +259,19 @@
  ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
  ✓ Compiled in 464ms
  ✓ Compiled in 201ms
+ ✓ Compiled in 507ms
+ ✓ Compiled in 494ms
+ ⚠ Fast Refresh had to perform a full reload when ./src/app/edit/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 436ms
+ GET / 200 in 1272ms
+ ✓ Compiled in 594ms
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1581578731548-c6a0c3f2f6c5?w=80&h=80&fit=crop&crop=center
+ ⨯ upstream image response timed out for https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=80&h=80&fit=crop&crop=center
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 367ms
