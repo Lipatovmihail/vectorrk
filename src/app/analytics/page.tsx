@@ -159,14 +159,7 @@ export default function AnalyticsPage() {
     }, 0)
   }, [currentPieChartData])
 
-  // Принудительное разворачивание на фулскрин
-  React.useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.expand();
-      window.Telegram.WebApp.MainButton.hide();
-      window.Telegram.WebApp.enableClosingConfirmation();
-    }
-  }, []);
+  // Telegram WebApp настройки теперь в TelegramWebApp компоненте
 
   // Отправка webhook при загрузке страницы
   React.useEffect(() => {

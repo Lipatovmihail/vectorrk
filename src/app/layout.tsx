@@ -4,6 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import { Toaster } from "@/components/ui/sonner";
 import FloatingMenu from "@/components/FloatingMenu";
+import TelegramWebApp from "@/components/TelegramWebApp";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -34,6 +35,7 @@ export default function RootLayout({
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
         />
+        <TelegramWebApp />
         {children}
         <FloatingMenu />
         <Toaster position="top-center" offset={60} />

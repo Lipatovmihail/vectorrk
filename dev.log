@@ -576,3 +576,5 @@
   syscall: 'open',
   path: '/Users/mihaillipatov/Desktop/sellerkitwbsite/vector/.next/server/app/favicon.ico/[__metadata_id__]/route/app-paths-manifest.json'
 }
+ ✓ Compiled in 246ms
+ ✓ Compiled in 1594ms

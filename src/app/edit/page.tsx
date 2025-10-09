@@ -58,14 +58,7 @@ function EditPageContent() {
     materials: string;
   }>>([]);
 
-  // Принудительное разворачивание на фулскрин
-  React.useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.expand();
-      window.Telegram.WebApp.MainButton.hide();
-      window.Telegram.WebApp.enableClosingConfirmation();
-    }
-  }, []);
+  // Telegram WebApp настройки теперь в TelegramWebApp компоненте
 
   // Загружаем данные заявок для редактирования
   React.useEffect(() => {
