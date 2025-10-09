@@ -307,9 +307,9 @@ export default function Home() {
             <Link href="/analytics">
               <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3 mb-3">
                 <div className="flex flex-col items-start justify-start w-full h-full">
-                  <div className="text-left">
-                    <div className="text-lg font-bold text-gray-900">Все заявки</div>
-                    <div className="text-sm text-gray-500 mt-1">Посмотреть статистику</div>
+                  <div className="text-left w-full">
+                    <div className="text-lg font-bold text-gray-900 truncate">Все заявки</div>
+                    <div className="text-sm text-gray-500 mt-1 truncate">Посмотреть статистику</div>
                   </div>
                 </div>
               </Button>
@@ -317,11 +317,11 @@ export default function Home() {
             <Link href="/edit">
               <Button variant="outline" className="w-full h-24 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm relative rounded-2xl p-3">
                 <div className="flex flex-col items-start justify-start w-full h-full">
-                  <div className="text-left">
-                    <div className="text-lg font-bold text-gray-900">Править</div>
-                    <div className="text-sm text-gray-500 mt-1">Внести изменения</div>
+                  <div className="text-left w-full pr-8">
+                    <div className="text-lg font-bold text-gray-900 truncate">Править</div>
+                    <div className="text-sm text-gray-500 mt-1 truncate">Внести изменения</div>
                   </div>
-                  <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
                     {editableCount}
                   </div>
                 </div>
@@ -362,12 +362,12 @@ export default function Home() {
             </div>
           ) : (
             <>
-        <div className="mb-4">
-          <div className="flex items-center justify-center gap-1 rounded-lg p-1 w-fit mx-auto" style={{backgroundColor: '#e9ecef'}}>
+        <div className="mb-4 px-4">
+          <div className="flex items-center justify-center gap-1 rounded-lg p-1 w-full max-w-sm mx-auto" style={{backgroundColor: '#e9ecef'}}>
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
+              className={`h-8 px-2 text-xs font-medium flex items-center gap-1 flex-1 ${
                 activeFilter === "Все" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
@@ -379,45 +379,45 @@ export default function Home() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
+              className={`h-8 px-2 text-xs font-medium flex items-center gap-1 flex-1 ${
                 activeFilter === "Создана" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
               onClick={() => setActiveFilter("Создана")}
             >
-              Создана
-              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="truncate">Создана</span>
+              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center flex-shrink-0">
                 {requests.filter(r => r.status === "Создана").length}
               </div>
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
+              className={`h-8 px-2 text-xs font-medium flex items-center gap-1 flex-1 ${
                 activeFilter === "В работе" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
               onClick={() => setActiveFilter("В работе")}
             >
-              В работе
-              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="truncate">В работе</span>
+              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center flex-shrink-0">
                 {requests.filter(r => r.status === "В работе").length}
               </div>
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`h-8 px-3 text-xs font-medium flex items-center gap-1 ${
+              className={`h-8 px-2 text-xs font-medium flex items-center gap-1 flex-1 ${
                 activeFilter === "Готова" 
                   ? "bg-white shadow-sm text-gray-900" 
                   : "text-gray-600 hover:bg-white"
               }`}
               onClick={() => setActiveFilter("Готова")}
             >
-              Готова
-              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="truncate">Готова</span>
+              <div className="w-4 h-4 bg-gray-300 text-gray-700 text-[10px] font-bold rounded-full flex items-center justify-center flex-shrink-0">
                 {requests.filter(r => r.status === "Готова").length}
               </div>
             </Button>
