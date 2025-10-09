@@ -309,7 +309,7 @@ export default function Home() {
                 <div className="flex flex-col items-start justify-start w-full h-full">
                   <div className="text-left w-full">
                     <div className="text-lg font-bold text-gray-900 truncate">Все заявки</div>
-                    <div className="text-sm text-gray-500 mt-1 truncate">Посмотреть статистику</div>
+                    <div className="text-xs text-gray-500 mt-1 leading-tight break-words">Посмотреть статистику</div>
                   </div>
                 </div>
               </Button>
@@ -319,7 +319,7 @@ export default function Home() {
                 <div className="flex flex-col items-start justify-start w-full h-full">
                   <div className="text-left w-full pr-8">
                     <div className="text-lg font-bold text-gray-900 truncate">Править</div>
-                    <div className="text-sm text-gray-500 mt-1 truncate">Внести изменения</div>
+                    <div className="text-xs text-gray-500 mt-1 leading-tight break-words">Внести изменения</div>
                   </div>
                   <div className="absolute top-2 right-2 w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
                     {editableCount}
